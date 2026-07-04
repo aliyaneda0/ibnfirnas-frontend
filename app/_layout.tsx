@@ -1,5 +1,15 @@
- import { Stack } from "expo-router";
+import { RootProviders } from "@/providers/root-providers";
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <RootProviders>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="auth" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="products/[id]" />
+      </Stack>
+    </RootProviders>
+  );
 }
