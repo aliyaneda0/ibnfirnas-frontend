@@ -9,14 +9,14 @@ import { useState } from "react";
 import { View } from "react-native";
 
 export default function LoginScreen() {
-  const { loginWithToken } = useAuth();
+  const { login } = useAuth();
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [countryCode, setCountryCode] = useState("+974");
   const [phone, setPhone] = useState("");
 
   const handleDemoLogin = () => {
-    loginWithToken("demo-jwt-token");
+    login("demo@example.com", "demopassword");
     router.replace("/");
   };
 

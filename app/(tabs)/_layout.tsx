@@ -1,9 +1,10 @@
 import * as React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { Platform } from "react-native";
 
 import { themeColors, themeFontFamily } from "@/config/design-tokens";
+import { useAuth } from "@/features/auth/auth-provider";
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -17,6 +18,11 @@ const TAB_ICONS: Record<string, { active: IconName; inactive: IconName }> = {
 };
 
 export default function TabsLayout() {
+
+   const { token } = useAuth();
+  if (!token) return <Redirect href="/(auth)/login" />;
+  return <Tabs .Protected.apply.apply/>;
+  
   return React.createElement(
     Tabs,
     {

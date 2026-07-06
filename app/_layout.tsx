@@ -5,7 +5,7 @@ import { RootProviders } from '@/providers/root-providers';
 import { useAuth } from '@/features/auth/auth-provider';
 
 // Prevent the splash from auto-hiding
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 //  export default function RootLayout() {
 // //   const { isLoading, user } = useAuth(); // your auth hook
@@ -28,21 +28,33 @@ SplashScreen.preventAutoHideAsync();
 // }
 
 export default function RootLayout() {
-  const { isAuthenticated } = useAuth();
+  const { isLoading , token } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      SplashScreen.hideAsync(); // hide when user is authenticated
-    }
-  }, [isAuthenticated]);
+   useEffect(() => {
+      if (!isLoading) {
+          SplashScreen.hideAsync(); // hide when user is authenticated
+        }
+      }, [isLoading]);
 
-  if (!isAuthenticated) {
-    return null; // or a loading indicator while splash is shown
+      if (isLoading) {
+          return null; // or a loading indicator while splash is shown
+        }
+
+//   if (!isAuthenticated) {
+//     return null; // or a loading indicator while splash is shown
+//   }
+
+//   return (
+//     <RootProviders>
+//       <Slot />
+//     </RootProviders>
+//   );
+// }
+
+ if (!token) {
+    return <Slot />; // This will render the (auth) routes
   }
 
-  return (
-    <RootProviders>
-      <Slot />
-    </RootProviders>
-  );
+  // Otherwise show the main tabs
+  return <Slot />; // This will render the (tabs) routes
 }
