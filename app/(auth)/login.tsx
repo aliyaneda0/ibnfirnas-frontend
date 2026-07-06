@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   const handleDemoLogin = () => {
     loginWithToken("demo-jwt-token");
-    router.replace("/(tabs)");
+    router.replace("/");
   };
 
   return (

@@ -10,7 +10,7 @@ export default function LanguageScreen() {
 
   const chooseLanguage = (language: "en" | "ar") => {
     setLanguage(language);
-    router.replace("/auth/login");
+    router.replace("/login");
   };
 
   return (
