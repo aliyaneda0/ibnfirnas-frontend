@@ -38,6 +38,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthContextType = {
   user: any | null;
@@ -49,24 +50,27 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
-    // Check for stored token on app start
-    const loadToken = async () => {
-      const storedToken = typeof window !== 'undefined' ? localStorage.getItem('jwt') : null;
+  const loadToken = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem('jwt');
       if (storedToken) {
-        // Optionally validate token with backend
         setToken(storedToken);
-        // You could also fetch user profile here
       }
-      setIsLoading(false);
-    };
-    loadToken();
-  }, []);
+    } catch (e) {
+      console.error('Failed to load token', e);
+    } finally {
+      setIsLoading(false); // always runs now, even on error
+    }
+  };
+  loadToken();
+}, []);
 
   const login = async (email: string, password: string) => {
     // Call your Spring Boot /login endpoint
@@ -78,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     const data = await response.json();
     if (response.ok) {
       const jwt = data.token;
-      if (typeof window !== 'undefined') localStorage.setItem('jwt', jwt);
+      if (typeof window !== 'undefined') await AsyncStorage.setItem('jwt', jwt);
       setToken(jwt);
       setUser(data.user); // if backend returns user info
       router.replace('./../(tabs)'); // navigate to main tabs
@@ -88,7 +92,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    if (typeof window !== 'undefined') localStorage.removeItem('jwt');
+    if (typeof window !== 'undefined') await AsyncStorage.removeItem('jwt');
     setToken(null);
     setUser(null);
     router.replace('/(auth)/login');

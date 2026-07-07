@@ -18,6 +18,6 @@ import { useAuth } from '@/features/auth/auth-provider';
 
 export default function AuthLayout() {
   const { token } = useAuth();
-  if (token) return <Redirect href="./(tabs)" />;
+  if (token) return <Redirect href="./../(tabs)" />;
   return <Stack />;
 }
