@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   const handleDemoLogin = () => {
     login("demo@example.com", "demopassword");
-    router.replace("/");
+    router.replace("./(tabs)");
   };
 
   return (
