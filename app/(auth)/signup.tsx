@@ -1,166 +1,99 @@
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native';
-import { Link, router } from 'expo-router';
+import { useState } from "react";
+import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+
+import { AppText } from "@/components/ui/app-text";
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { PrimaryButton } from "@/components/ui/primary-button";
+import { TextField } from "@/components/ui/text-field";
+import { themeColors } from "@/config/design-tokens";
+import { useLanguage } from "@/i18n/i18n-provider";
 
 export default function SignUpScreen() {
-  // Form fields
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
-  // Validation
-  const validateForm = () => {
-    if (!fullName.trim()) {
-      Alert.alert('Error', 'Full name is required');
-      return false;
-    }
-    if (!email.trim() || !email.includes('@')) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return false;
-    }
-    if (!phone.trim() || phone.length < 10) {
-      Alert.alert('Error', 'Please enter a valid phone number (min 10 digits)');
-      return false;
-    }
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return false;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return false;
-    }
-    return true;
-  };
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [secureText, setSecureText] = useState(true);
 
-  // Handle sign-up
-  const handleSignUp = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    try {
-      // Replace with your Spring Boot sign-up endpoint
-      const response = await fetch('YOUR_BACKEND_URL/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          email,
-          phone,
-          password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Success – you can auto-login or redirect to login
-        Alert.alert(
-          'Account Created!',
-          'Please log in with your credentials.',
-          [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
-        );
-      } else {
-        // Show error from backend
-        Alert.alert('Sign Up Failed', data.message || 'Something went wrong');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
-    } finally {
-      setIsLoading(false);
+  const handleSignUp = () => {
+    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
+      Alert.alert(t("auth.signupTitle"), "All fields are required");
+      return;
     }
+
+    router.push({
+      pathname: "/(auth)/verify-otp",
+      params: { name, email, phone, password },
+    });
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-white"
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View className="p-6">
-        <Text className="text-3xl font-bold text-center mb-2">
-          Create Account
-        </Text>
-        <Text className="text-gray-500 text-center mb-8">
-          Join us with your email and phone
-        </Text>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: themeColors.background }}>
+      <LanguageToggle variant="light" />
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
+        <View className="flex-1 px-6 pb-8 pt-12">
+          <View className="items-center gap-2">
+            <AppText variant="title">{t("auth.signupTitle")}</AppText>
+            <AppText className="px-4 text-center text-sm" muted>
+              {t("auth.signupSubtitle")}
+            </AppText>
+          </View>
 
-        {/* Full Name */}
-        <TextInput
-          className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
-          placeholder="Full Name"
-          value={fullName}
-          onChangeText={setFullName}
-        />
+          <View className="mt-8 gap-4">
+            <TextField
+              leftIcon="user"
+              onChangeText={setName}
+              placeholder={t("auth.name")}
+              value={name}
+            />
+            <TextField
+              autoCapitalize="none"
+              keyboardType="email-address"
+              leftIcon="mail"
+              onChangeText={setEmail}
+              placeholder={t("auth.email")}
+              value={email}
+            />
+            <TextField
+              keyboardType="phone-pad"
+              leftIcon="phone"
+              onChangeText={setPhone}
+              placeholder={t("auth.phone")}
+              value={phone}
+            />
+            <TextField
+              leftIcon="lock"
+              onChangeText={setPassword}
+              onRightIconPress={() => setSecureText(!secureText)}
+              placeholder={t("auth.password")}
+              rightIcon={secureText ? "eye-off" : "eye"}
+              secureTextEntry={secureText}
+              value={password}
+            />
+          </View>
 
-        {/* Email */}
-        <TextInput
-          className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+          <View className="mt-6 gap-6">
+            <PrimaryButton label={t("auth.signup")} onPress={handleSignUp} />
 
-        {/* Phone */}
-        <TextInput
-          className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
-          placeholder="Phone Number"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-        />
-
-        {/* Password */}
-        <TextInput
-          className="border border-gray-300 rounded-lg p-4 mb-4 text-base"
-          placeholder="Password (min 6 characters)"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        {/* Confirm Password */}
-        <TextInput
-          className="border border-gray-300 rounded-lg p-4 mb-6 text-base"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-
-        {/* Sign Up Button */}
-        <TouchableOpacity
-          className={`bg-blue-500 rounded-lg p-4 items-center ${
-            isLoading ? 'opacity-50' : ''
-          }`}
-          onPress={handleSignUp}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white text-lg font-semibold">Sign Up</Text>
-          )}
-        </TouchableOpacity>
-
-        {/* Link to Login */}
-        <Link href="/(auth)/login" className="mt-4 text-center text-blue-500">
-          Already have an account? Log in
-        </Link>
-      </View>
-    </ScrollView>
+            <View className="flex-row items-center justify-center gap-1">
+              <AppText className="text-sm" muted>
+                {t("auth.haveAccount")}
+              </AppText>
+              <AppText
+                className="text-sm underline"
+                onPress={() => router.back()}
+                style={{ color: themeColors.accent }}
+              >
+                {t("auth.login")}
+              </AppText>
+            </View>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

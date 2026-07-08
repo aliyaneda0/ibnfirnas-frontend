@@ -5,7 +5,8 @@
     "ignoreDeprecations": "6.0",
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+       
     }
   },
   "include": [

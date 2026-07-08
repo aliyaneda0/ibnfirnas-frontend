@@ -1,105 +1,113 @@
-// import { PropsWithChildren, createContext, useContext, useMemo, useState, createElement } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
 
-// type AuthContextValue = {
-//   isAuthenticated: boolean;
-//   loginWithToken: (token: string) => void;
-//   logout: () => void;
-//   token: string | null;
-// };
+const TOKEN_KEY = "auth-token";
+const USER_KEY = "auth-user";
 
-// const AuthContext = createContext<AuthContextValue | null>(null);
+type AuthUser = {
+  id: string;
+  name?: string;
+  email?: string;
+  phone: string;
+};
 
-// export function AuthProvider({ children }: PropsWithChildren) {
-//   const [token, setToken] = useState<string | null>(null);
-
-//   const value = useMemo<AuthContextValue>(
-//     () => ({
-//       isAuthenticated: Boolean(token),
-//       loginWithToken: setToken,
-//       logout: () => setToken(null),
-//       token,
-//     }),
-//     [token],
-//   );
-
-//   return createElement(AuthContext.Provider, { value }, children);
-// }
-
-// export function useAuth() {
-//   const context = useContext(AuthContext);
-
-//   if (!context) {
-//     throw new Error("useAuth must be used inside AuthProvider");
-//   }
-
-//   return context;
-// }
-
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+type RegisterInput = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
 
 type AuthContextType = {
-  user: any | null;
+  user: AuthUser | null;
   token: string | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
+  register: (input: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// No backend yet — this mocks auth locally and persists only the token/user on-device.
+function createMockToken() {
+  return `mock-token-${Date.now()}`;
+}
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
-  const loadToken = async () => {
-    try {
-      const storedToken = await AsyncStorage.getItem('jwt');
-      if (storedToken) {
-        setToken(storedToken);
-      }
-    } catch (e) {
-      console.error('Failed to load token', e);
-    } finally {
-      setIsLoading(false); // always runs now, even on error
-    }
-  };
-  loadToken();
-}, []);
+    const bootstrap = async () => {
+      try {
+        const [storedToken, storedUser] = await Promise.all([
+          SecureStore.getItemAsync(TOKEN_KEY),
+          SecureStore.getItemAsync(USER_KEY),
+        ]);
 
-  const login = async (email: string, password: string) => {
-    // Call your Spring Boot /login endpoint
-    const response = await fetch('YOUR_BACKEND_URL/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      const jwt = data.token;
-      if (typeof window !== 'undefined') await AsyncStorage.setItem('jwt', jwt);
-      setToken(jwt);
-      setUser(data.user); // if backend returns user info
-      router.replace('./../(tabs)'); // navigate to main tabs
-    } else {
-      throw new Error(data.message || 'Login failed');
+        if (storedToken) {
+          setToken(storedToken);
+        }
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (e) {
+        console.error("Failed to load auth session", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    bootstrap();
+  }, []);
+
+  const persistSession = async (nextToken: string, nextUser: AuthUser) => {
+    try {
+      await SecureStore.setItemAsync(TOKEN_KEY, nextToken);
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(nextUser));
+    } catch (e) {
+      // Don't block the session on a storage failure — the user stays logged in for this run.
+      console.error("Failed to persist auth session", e);
     }
+    setToken(nextToken);
+    setUser(nextUser);
+  };
+
+  const login = async (phone: string, password: string) => {
+    if (!phone.trim() || !password.trim()) {
+      throw new Error("Phone and password are required");
+    }
+
+    await persistSession(createMockToken(), {
+      id: phone,
+      phone,
+    });
+  };
+
+  const register = async ({ name, email, phone, password }: RegisterInput) => {
+    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
+      throw new Error("All fields are required");
+    }
+
+    // No backend yet — this just simulates account creation. It does not log
+    // the user in; the OTP verification screen routes them to Login instead.
   };
 
   const logout = async () => {
-    if (typeof window !== 'undefined') await AsyncStorage.removeItem('jwt');
+    try {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(USER_KEY);
+    } catch (e) {
+      console.error("Failed to clear auth session", e);
+    }
     setToken(null);
     setUser(null);
-    router.replace('/(auth)/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -107,6 +115,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

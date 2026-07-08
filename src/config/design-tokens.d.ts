@@ -1,5 +1,6 @@
 export const themeColors: {
   primary: string;
+  secondary: string;
   accent: string;
   card: string;
   background: string;

@@ -1,5 +1,6 @@
 const themeColors = {
   primary: "#0E4D92",
+  secondary: "#1E6FB8",
   accent: "#E63946",
   card: "#FFFFFF",
   background: "#F8FAFC",
@@ -10,8 +11,8 @@ const themeColors = {
 
 const themeFontFamily = {
   sans: ["Poppins_400Regular"],
-  medium: ["Poppins_500Medium"],
-  bold: ["Poppins_700Bold"],
+  medium: ["IBMPlexSans_600SemiBold"],
+  bold: ["IBMPlexSans_700Bold"],
 };
 
 module.exports = {
