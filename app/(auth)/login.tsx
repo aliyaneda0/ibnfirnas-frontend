@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Alert, Image, KeyboardAvoidingView, Platform, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { AppText } from "@/components/ui/app-text";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { TextField } from "@/components/ui/text-field";
@@ -38,12 +39,8 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
         <View className="flex-1 px-6 pb-8 pt-36">
           <View className="items-center gap-2">
-            <View className="mb-2 items-center justify-center rounded-2xl bg-white p-1.5">
-              <Image
-                source={require("../../assets/images/splash-icon.png")}
-                style={{ width: 76, height: 76 }}
-                resizeMode="contain"
-              />
+            <View className="mb-2">
+              <BrandLogo size={92} />
             </View>
             <AppText className="text-3xl pt-2" style={{ color: "#FFFFFF" }} variant="title">
               {t("auth.loginTitle")}

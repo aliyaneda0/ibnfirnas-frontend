@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Image, Modal, Pressable, View } from "react-native";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -9,8 +8,7 @@ import { themeColors, themeFontFamily } from "@/config/design-tokens";
 import { useAuth } from "@/features/auth/auth-provider";
 import { useLanguage } from "@/i18n/i18n-provider";
 import { AppText } from "./app-text";
-
-import LogoImage from "../../../assets/images/splash-icon.png";
+import { BrandLogo } from "./brand-logo";
 
 type QuickNavItem = {
   icon: keyof typeof Feather.glyphMap;
@@ -55,32 +53,19 @@ export function AppHeader() {
 
         <View className="w-full flex-row items-center justify-between px-4 py-3">
           <View className="flex-row items-center gap-2.5">
-            <Image resizeMode="contain" source={LogoImage} style={{ height: 38, width: 38 }} />
+            <BrandLogo size={40} />
             <View>
-              <View style={{ alignSelf: "flex-start" }}>
-                <AppText
-                  style={{
-                    color: themeColors.primary,
-                    fontFamily: themeFontFamily.bold[0],
-                    fontSize: 17,
-                    letterSpacing: 0.3,
-                    lineHeight: 19,
-                    textShadowColor: "rgba(11,31,58,0.2)",
-                    textShadowOffset: { width: 0, height: 1 },
-                    textShadowRadius: 1,
-                  }}
-                >
-                  IBN FIRNAS
-                </AppText>
-                {/* Glossy sheen — same "light reflection" trick as the splash logo/hero carousel */}
-                <LinearGradient
-                  colors={["rgba(255,255,255,0.65)", "rgba(255,255,255,0)"]}
-                  end={{ x: 0.5, y: 1 }}
-                  pointerEvents="none"
-                  start={{ x: 0.5, y: 0 }}
-                  style={{ position: "absolute", left: 0, right: 0, top: 0, height: "58%" }}
-                />
-              </View>
+              <AppText
+                style={{
+                  color: themeColors.primary,
+                  fontFamily: themeFontFamily.bold[0],
+                  fontSize: 17,
+                  letterSpacing: 0.3,
+                  lineHeight: 18,
+                }}
+              >
+                IBN FIRNAS
+              </AppText>
               <AppText
                 numberOfLines={1}
                 style={{
@@ -88,8 +73,8 @@ export function AppHeader() {
                   fontFamily: themeFontFamily.medium[0],
                   fontSize: 7.5,
                   letterSpacing: 0,
-                  lineHeight: 10,
-                  marginTop: 2,
+                  lineHeight: 9,
+                  marginTop: 0,
                   opacity: 0.85,
                 }}
               >

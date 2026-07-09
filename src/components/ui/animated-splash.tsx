@@ -1,11 +1,9 @@
 // components/ui/animated-splash.tsx
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Image, StyleSheet, View, Platform } from 'react-native';
+import { Animated, Easing, StyleSheet, View, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { themeColors, themeFontFamily } from '@/config/design-tokens';
-
-// Swap this for your actual logo asset
-import LogoImage from '../../../assets/images/splash-icon.png';
+import { BrandLogo } from './brand-logo';
 
 
 const useNativeDriver = Platform.OS !== 'web';
@@ -143,17 +141,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
           transform: [{ scale: logoScale }],
         }}
       >
-        <View style={styles.logoCard}>
-          <Image source={LogoImage} style={styles.logo} resizeMode="contain" />
-          {/* Glossy highlight — cheap "3D glass icon" trick, reads as a light reflection */}
-          <LinearGradient
-            colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0)']}
-            end={{ x: 0.5, y: 1 }}
-            pointerEvents="none"
-            start={{ x: 0.5, y: 0 }}
-            style={styles.logoGloss}
-          />
-        </View>
+        <BrandLogo size={100} />
       </Animated.View>
 
       <Animated.Text
@@ -181,32 +169,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
-  },
-  logoCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 100,
-    height: 100,
-    borderRadius: 22,
-    backgroundColor: themeColors.card,
-    overflow: 'hidden',
-    // 3D depth: soft shadow offset down-right, simulating a top-left light source
-    shadowColor: themeColors.navy,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  logo: {
-    width: 82,
-    height: 82,
-  },
-  logoGloss: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '50%',
   },
   wordmark: {
     marginTop: 16,
