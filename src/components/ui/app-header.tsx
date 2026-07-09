@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Image, Modal, Pressable, View } from "react-native";
 import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -56,26 +57,40 @@ export function AppHeader() {
           <View className="flex-row items-center gap-2.5">
             <Image resizeMode="contain" source={LogoImage} style={{ height: 38, width: 38 }} />
             <View>
-              <AppText
-                style={{
-                  color: themeColors.primary,
-                  fontFamily: themeFontFamily.bold[0],
-                  fontSize: 17,
-                  letterSpacing: 0.3,
-                  lineHeight: 19,
-                }}
-              >
-                IBN FIRNAS
-              </AppText>
+              <View style={{ alignSelf: "flex-start" }}>
+                <AppText
+                  style={{
+                    color: themeColors.primary,
+                    fontFamily: themeFontFamily.bold[0],
+                    fontSize: 17,
+                    letterSpacing: 0.3,
+                    lineHeight: 19,
+                    textShadowColor: "rgba(11,31,58,0.2)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: 1,
+                  }}
+                >
+                  IBN FIRNAS
+                </AppText>
+                {/* Glossy sheen — same "light reflection" trick as the splash logo/hero carousel */}
+                <LinearGradient
+                  colors={["rgba(255,255,255,0.65)", "rgba(255,255,255,0)"]}
+                  end={{ x: 0.5, y: 1 }}
+                  pointerEvents="none"
+                  start={{ x: 0.5, y: 0 }}
+                  style={{ position: "absolute", left: 0, right: 0, top: 0, height: "58%" }}
+                />
+              </View>
               <AppText
                 numberOfLines={1}
                 style={{
                   color: themeColors.primaryLight,
                   fontFamily: themeFontFamily.medium[0],
-                  fontSize: 8.5,
-                  letterSpacing: 0.2,
-                  lineHeight: 11,
-                  marginTop: 1,
+                  fontSize: 7.5,
+                  letterSpacing: 0,
+                  lineHeight: 10,
+                  marginTop: 2,
+                  opacity: 0.85,
                 }}
               >
                 {t("home.tagline").toUpperCase()}
