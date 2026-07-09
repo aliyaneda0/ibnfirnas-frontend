@@ -22,6 +22,17 @@ export default function Home() {
 
   return (
     <Screen>
+      <View className="flex-row">
+        <Pressable
+          accessibilityLabel={t("profile.title")}
+          accessibilityRole="button"
+          className="h-11 w-11 items-center justify-center rounded-full border border-border bg-card active:opacity-80"
+          onPress={() => router.push("/profile")}
+        >
+          <Feather color={themeColors.primary} name="user" size={20} />
+        </Pressable>
+      </View>
+
       <View className="gap-2">
         <AppText variant="title">{t("home.title")}</AppText>
         <AppText muted>{t("home.subtitle")}</AppText>

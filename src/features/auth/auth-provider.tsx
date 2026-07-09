@@ -9,6 +9,7 @@ type AuthUser = {
   name?: string;
   email?: string;
   phone: string;
+  location?: string;
 };
 
 type RegisterInput = {
@@ -25,6 +26,7 @@ type AuthContextType = {
   login: (phone: string, password: string) => Promise<void>;
   register: (input: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (updates: Partial<Omit<AuthUser, "id">>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -95,6 +97,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // the user in; the OTP verification screen routes them to Login instead.
   };
 
+  const updateProfile = async (updates: Partial<Omit<AuthUser, "id">>) => {
+    if (!user) return;
+    await persistSession(token ?? createMockToken(), { ...user, ...updates });
+  };
+
   const logout = async () => {
     try {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
@@ -107,7 +114,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, isLoading, login, register, logout, updateProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

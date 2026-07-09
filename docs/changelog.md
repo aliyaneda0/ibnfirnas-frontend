@@ -2,6 +2,15 @@
 
 Notable changes to the ibnfirnas-frontend app. Newest entries first.
 
+## 2026-07-08 — Arabic text rendering + language toggle safe-area fix
+
+On native (not reproducible in the web preview), the language toggle pill on Login/Signup appeared as a bare icon with no visible "العربية" label, and looked like it was overlapping the status bar/camera cutout.
+
+### Fixed
+- **Arabic text rendering app-wide**: `AppText` was forcing Poppins/IBM Plex Sans onto all text, including Arabic. Both fonts are Latin-only; on native, an unsupported glyph in an explicitly-set font can render blank instead of falling back to a system font the way browsers do. `AppText` now only applies the custom fonts when `language !== "ar"` — Arabic text uses the platform default font instead, which has full Arabic glyph coverage. This is the most likely explanation for the invisible label (the pill/icon container still rendered, just not the text inside it).
+- **`LanguageToggle` positioning**: switched from a `top-4` class (relying on the parent `SafeAreaView`'s padding) to explicitly reading `useSafeAreaInsets()` and positioning at `insets.top + 12` — more robust against inset-measurement differences across devices/cutouts.
+- Pushed Login screen content down further (`pt-16` → `pt-24`, later adjusted to `pt-36`) per feedback that the icon/form sat too close to the top even after the safe-area fix.
+
 ## 2026-07-08 — Auth flow rebuild: splash, login, signup, OTP, Home
 
 The `(auth)` flow and its supporting config were in a broken, half-migrated state (design-tokens mid-conversion from `.js` to `.ts`, `login.tsx`/`signup.tsx` importing modules that didn't exist, a dead duplicate splash-gate file). This release fixes the underlying configuration and rebuilds the flow end-to-end: **animated splash → Login → Signup → OTP verification → Home**, fully local/mocked since there is no backend yet, styled from the shared design tokens, with English/Arabic support throughout.

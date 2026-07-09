@@ -1,12 +1,13 @@
 const themeColors = {
-  primary: "#0E4D92",
-  secondary: "#1E6FB8",
-  accent: "#E63946",
-  card: "#FFFFFF",
-  background: "#F8FAFC",
-  text: "#1E293B",
-  subText: "#64748B",
-  border: "#E5E7EB",
+  primary: '#0B3C73',       // Richer, deeper navy than original
+  secondary: '#2579C6',     // Bright cobalt blue for secondary focus
+  accent: '#DC2626',        // Highly visible crimson red for emergency CTAs / alerts
+  background: '#F1F5F9',    // Smooth slate-tinted background
+  card: '#FFFFFF',          // Crisp pure white for cards
+  text: '#0F172A',          // Ultra-dark slate for perfect contrast
+  textSecondary: '#475569',  // Medium slate for subheadings
+  border: '#E2E8F0',        // Clean modern border
+  success: '#059669',
 };
 
 const themeFontFamily = {
@@ -18,4 +19,5 @@ const themeFontFamily = {
 module.exports = {
   themeColors,
   themeFontFamily,
+   
 };
