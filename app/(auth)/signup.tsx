@@ -8,27 +8,37 @@ import { LanguageToggle } from "@/components/ui/language-toggle";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { TextField } from "@/components/ui/text-field";
 import { themeColors } from "@/config/design-tokens";
+import { useAuth } from "@/features/auth/auth-provider";
 import { useLanguage } from "@/i18n/i18n-provider";
 
 export default function SignUpScreen() {
   const { t } = useLanguage();
+  const { register } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignUp = () => {
-    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
-      Alert.alert(t("auth.signupTitle"), "All fields are required");
+  const handleSignUp = async () => {
+    if (!name.trim() || !email.trim() || password.trim().length < 6) {
+      Alert.alert(t("auth.signupTitle"), "Full name, email, and a password of at least 6 characters are required");
       return;
     }
 
-    router.push({
-      pathname: "/(auth)/verify-otp",
-      params: { name, email, phone, password },
-    });
+    setIsSubmitting(true);
+    try {
+      // Register auto-logs-in (the real endpoint returns a token directly) —
+      // no OTP step, straight to Home.
+      await register({ fullName: name, email, password, phone: phone.trim() || undefined });
+      router.replace("/(tabs)/Home");
+    } catch (error) {
+      Alert.alert(t("auth.signupTitle"), (error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -77,7 +87,7 @@ export default function SignUpScreen() {
           </View>
 
           <View className="mt-6 gap-6">
-            <PrimaryButton label={t("auth.signup")} onPress={handleSignUp} />
+            <PrimaryButton disabled={isSubmitting} label={t("auth.signup")} onPress={handleSignUp} />
 
             <View className="flex-row items-center justify-center gap-1">
               <AppText className="text-sm" muted>
@@ -86,7 +96,7 @@ export default function SignUpScreen() {
               <AppText
                 className="text-sm underline"
                 onPress={() => router.back()}
-                style={{ color: themeColors.accent }}
+                style={{ color: themeColors.primary }}
               >
                 {t("auth.login")}
               </AppText>

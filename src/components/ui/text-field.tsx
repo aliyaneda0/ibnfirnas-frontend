@@ -46,13 +46,13 @@ export function TextField({
           <Feather
             name={leftIcon}
             size={20}
-            color={isDark ? "#CBD5E1" : themeColors.subText}
+            color={isDark ? "#CBD5E1" : themeColors.textSecondary}
           />
         ) : null}
         <TextInput
           className={`flex-1 font-sans text-base ${isDark ? "text-white" : "text-text"} ${className}`}
           placeholderTextColor={
-            placeholderTextColor ?? (isDark ? "#94A3B8" : themeColors.subText)
+            placeholderTextColor ?? (isDark ? "#94A3B8" : themeColors.textSecondary)
           }
           {...props}
         />
@@ -61,7 +61,7 @@ export function TextField({
             <Feather
               name={rightIcon}
               size={20}
-              color={isDark ? "#CBD5E1" : themeColors.subText}
+              color={isDark ? "#CBD5E1" : themeColors.textSecondary}
             />
           </Pressable>
         ) : null}

@@ -142,7 +142,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
   return (
     <Animated.View
       style={[
-        StyleSheet.absoluteFillObject,
+        StyleSheet.absoluteFill,
         styles.container,
         {
           backgroundColor,
