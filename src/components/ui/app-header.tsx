@@ -68,12 +68,13 @@ export function AppHeader() {
                 IBN FIRNAS
               </AppText>
               <AppText
+                numberOfLines={1}
                 style={{
                   color: themeColors.primaryLight,
                   fontFamily: themeFontFamily.medium[0],
-                  fontSize: 9.5,
-                  letterSpacing: 1,
-                  lineHeight: 12,
+                  fontSize: 8.5,
+                  letterSpacing: 0.2,
+                  lineHeight: 11,
                   marginTop: 1,
                 }}
               >
