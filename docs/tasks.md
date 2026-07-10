@@ -26,6 +26,10 @@ Working task list for ibnfirnas-frontend. Check items off as they land; move fin
 - [x] Add `WhatsAppFab`, `Skeleton`/`SkeletonCard`, `ErrorState`/`EmptyState`, `Badge` shared components
 - [x] Add standalone Inquiry form (`app/inquiry.tsx`) with prefill support + confirmation state
 - [x] Rebuild Profile tab to match the real `/api/profile` contract (logged-out prompt, editable fullName/phone/avatarUrl, password-change sub-flow); drop the old `location` field
+- [x] Rebuild splash screen to match spec §4 exactly (full-bleed navy→primary gradient, 3D logo, all-caps sky-tinted wordmark)
+- [x] Extract shared `BrandLogo` component; use it consistently on splash, header, and login
+- [x] Fix header title/tagline sizing (tagline was overflowing wider than the app name)
+- [x] Consolidate the header's two right-side icons into one avatar button that opens a menu (profile/login, language, my inquiries, contact support, about us, logout)
 
 ## Open / next up
 

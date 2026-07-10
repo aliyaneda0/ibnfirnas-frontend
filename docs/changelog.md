@@ -2,6 +2,21 @@
 
 Notable changes to the ibnfirnas-frontend app. Newest entries first.
 
+## 2026-07-10 — Splash/header polish, shared BrandLogo, consolidated profile menu
+
+Follow-up round of UI feedback on top of the v1 integration spec build below: the splash screen didn't yet match the spec's §4 visual design, the header title/tagline had sizing issues, and the header's two right-side icons were consolidated into one.
+
+### Added
+- **`BrandLogo`** (`src/components/ui/brand-logo.tsx`): the logo's "3D glass icon" treatment — white rounded card, soft down-right shadow (`navy`, `{0,6}` offset, 0.25 opacity, 12 radius, elevation 8), and a top-half glossy highlight — factored out of the splash screen into a shared component so splash, header, and login can't drift out of sync. All three now use it instead of ad hoc `Image`/card markup.
+- **Consolidated header menu**: the header's right side is now a single avatar button (was two: a grid "quick access" icon and a separate avatar icon). Tapping it opens a bottom sheet with a profile/login row, then My Profile, Language (toggles EN/AR in place), My Inquiries, Contact Support (`tel:` to the company phone), and About Us (company description) as card rows with chevrons, plus a separated red Logout pill when signed in. The old quick-access grid (Home/Services/Gallery/Contact shortcuts) was dropped since all of those are already one tap away on the bottom tab bar.
+
+### Changed
+- **Splash screen rebuilt to match the spec exactly**: full-bleed `navy → primary` gradient background (previously a white background that shifted to blue partway through the animation); logo now uses `BrandLogo`; wordmark is all-caps "IBN FIRNAS" in a `sky` tint for legibility on the dark gradient (previously mixed-case, color-interpolated with the old background transition).
+- **Header title fixed**: the "TRADING & CONTRACTING" tagline was overflowing wider than "IBN FIRNAS" above it (letter-spacing on the smaller text made it wider despite fewer effective characters) — tightened its size/letter-spacing/line-height so it sits inside the title's width with a tighter gap. Tried a true gradient-fill on the title via `@react-native-masked-view/masked-view` for a "glossier" look; it doesn't render its mask on web (silently falls back to flat black text) so that dependency was added and removed in the same session — the title uses a solid `primary` color with a light gloss-overlay sheen instead (same technique as `BrandLogo`), no text-shadow (an earlier attempt at one darkened the blue enough to read as near-black at this size).
+
+### Known limitations
+- Gradient-fill/masked text was evaluated and rejected for web-support reasons — if a native build later confirms `@react-native-masked-view/masked-view` renders correctly there, it could be reconsidered for native only, but don't reintroduce it as a cross-platform default without checking web again.
+
 ## 2026-07-10 — v1 integration spec: mock data layer, real-shaped auth, full content screens
 
 Implemented the consolidated frontend integration spec (API contracts verified live against the backend on `developer-2`, 2026-07-10). Phase 1 as specified: every screen is built against typed mock data, no live network calls yet, but every type/hook is shaped exactly like the real API so wiring it later is a drop-in swap per hook.
