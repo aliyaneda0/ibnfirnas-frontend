@@ -1,0 +1,82 @@
+diff --git a/node_modules/@expo/metro-file-map/build/lib/TreeFS.js b/node_modules/@expo/metro-file-map/build/lib/TreeFS.js
+index 041080b..f79b5e9 100644
+--- a/node_modules/@expo/metro-file-map/build/lib/TreeFS.js
++++ b/node_modules/@expo/metro-file-map/build/lib/TreeFS.js
+@@ -372,12 +372,13 @@ class TreeFS {
+             }
+             : undefined;
+         const parentDirNode = this.#walkAndMakeDirectories(this.#rootNode, 0, 0, dirname, true, onSegment);
+-        if (!parentDirNode.exists) {
+-            throw new Error(`TreeFS: Failed to make parent directory entry for ${mixedPath}`);
+-        }
+-        if (!isDirectory(parentDirNode.node)) {
+-            throw new Error(`TreeFS: Could not add directory ${dirname}, adding ${mixedPath}. ` +
+-                `${dirname} already exists in the file map as a file.`);
++        if (!parentDirNode.exists || !isDirectory(parentDirNode.node)) {
++            // PATCHED (Windows stale-tree self-heal): rather than crashing the
++            // whole Metro process when a stale crawl/watch event can't be
++            // reconciled into the tree, skip this single file update and keep
++            // the server running. Seen on Windows with large node_modules trees.
++            console.warn(`[metro-file-map patch] Skipping unreconcilable update for ${mixedPath}`);
++            return;
+         }
+         const canonicalPath = this.#normalizePath(parentDirNode.canonicalPath + path_1.default.sep + basename);
+         if (changeListener != null) {
+@@ -411,16 +412,22 @@ class TreeFS {
+             const dirname = lastSepIdx === -1 ? '' : normalPath.slice(0, lastSepIdx);
+             const basename = lastSepIdx === -1 ? normalPath : normalPath.slice(lastSepIdx + 1);
+             if (directoryNode == null || dirname !== lastDir) {
+-                const lookup = this.#walkAndMakeDirectories(this.#rootNode, 0, 0, dirname, false, onSegment);
+-                if (!lookup.exists) {
+-                    // This should only be possible if the input is non-real and
+-                    // lookup hits a broken symlink.
+-                    throw new Error(`TreeFS: Unexpected error adding ${normalPath}.\nMissing: ` +
+-                        lookup.canonicalMissingPath);
++                let lookup = this.#walkAndMakeDirectories(this.#rootNode, 0, 0, dirname, false, onSegment);
++                if (lookup.exists && !isDirectory(lookup.node) && lookup.parentNode != null) {
++                    // PATCHED (Windows stale-tree self-heal): a stale crawl/watch
++                    // event left this directory segment registered as a file.
++                    // Force-convert it to a directory in place instead of
++                    // skipping every file that lives under it.
++                    const staleBasename = path_1.default.basename(dirname);
++                    const freshDir = new Map();
++                    lookup.parentNode.set(staleBasename, freshDir);
++                    lookup = { ...lookup, node: freshDir, exists: true };
+                 }
+-                if (!isDirectory(lookup.node)) {
+-                    throw new Error(`TreeFS: Could not add directory ${dirname}, adding ${normalPath}. ` +
+-                        `${dirname} already exists in the file map as a file.`);
++                if (!lookup.exists || !isDirectory(lookup.node)) {
++                    console.warn(`[metro-file-map patch] Skipping unreconcilable bulk update for ${normalPath}`);
++                    lastDir = undefined;
++                    directoryNode = null;
++                    continue;
+                 }
+                 lastDir = dirname;
+                 directoryNode = lookup.node;
+@@ -934,11 +941,20 @@ class TreeFS {
+                     ? targetNormalPath
+                     : targetNormalPath.slice(0, fromIdx - 1);
+                 if (isRegularFile(segmentNode)) {
+-                    return {
+-                        canonicalMissingPath: currentPath,
+-                        exists: false,
+-                        missingSegmentName: segmentName,
+-                    };
++                    // PATCHED (Windows stale-tree self-heal): a stale crawl/watch
++                    // event can leave a path segment registered as a file when it
++                    // now needs to be a directory (observed on Windows with large
++                    // node_modules trees). Rather than throwing and crashing the
++                    // whole Metro process, replace the stale file entry with a
++                    // fresh directory and continue.
++                    segmentNode = new Map();
++                    parentNode.set(segmentName, segmentNode);
++                    wasJustCreated = true;
++                    parentNode = segmentNode;
++                    if (onSegment != null) {
++                        onSegment(segmentNode, currentPath, segmentName, ancestorOfRootIdx, true);
++                    }
++                    continue;
+                 }
+                 const followResult = this.#followSymlink(segmentNode, currentPath, segmentName, isLastSegment ? '' : targetNormalPath.slice(fromIdx), followedSymlinks, undefined, undefined);
+                 if (followResult !== undefined) {
