@@ -89,11 +89,11 @@ export function AppHeader() {
 
         <View className="w-full flex-row items-center justify-between px-4 py-3">
           <View className="flex-row items-center gap-2.5">
-            <BrandLogo size={40} />
+            <BrandLogo card={false} size={40} />
             <View>
               <AppText
                 style={{
-                  color: themeColors.primary,
+                  color: "#2468AC",
                   fontFamily: themeFontFamily.bold[0],
                   fontSize: 17,
                   letterSpacing: 0.3,
@@ -105,7 +105,7 @@ export function AppHeader() {
               <AppText
                 numberOfLines={1}
                 style={{
-                  color: themeColors.primaryLight,
+                  color: "#2468AC",
                   fontFamily: themeFontFamily.medium[0],
                   fontSize: 7.5,
                   letterSpacing: 0,
