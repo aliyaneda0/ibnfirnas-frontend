@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  ImageBackground,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
@@ -8,7 +9,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { themeFontFamily } from "@/config/design-tokens";
@@ -20,27 +20,27 @@ type MCIName = keyof typeof MaterialCommunityIcons.glyphMap;
 type Slide = {
   icon: MCIName;
   titleKey: "carousel.doors" | "carousel.shutters" | "carousel.barriers" | "carousel.systems";
-  gradient: [string, string];
+  image: number;
 };
 
 const SLIDES: Slide[] = [
-  { icon: "door-sliding", titleKey: "carousel.doors", gradient: ["#0B3C73", "#2579C6"] },
-  { icon: "garage", titleKey: "carousel.shutters", gradient: ["#2579C6", "#0EA5A0"] },
-  { icon: "boom-gate-up-outline", titleKey: "carousel.barriers", gradient: ["#0EA5A0", "#059669"] },
-  { icon: "factory", titleKey: "carousel.systems", gradient: ["#0B3C73", "#DC2626"] },
+  { icon: "door-sliding", titleKey: "carousel.doors", image: require("../../../assets/images/hero_bg_1.png") },
+  { icon: "garage", titleKey: "carousel.shutters", image: require("../../../assets/images/hero_bg_2.png") },
+  { icon: "boom-gate-up-outline", titleKey: "carousel.barriers", image: require("../../../assets/images/hero_bg_3.png") },
+  { icon: "factory", titleKey: "carousel.systems", image: require("../../../assets/images/hero_bg_4.png") },
 ];
 
 const AUTO_SLIDE_MS = 4000;
-// Home's scroll content uses 24px of horizontal padding on each side, so the
-// full-width carousel fills exactly that available space (no extra math needed
-// by the caller).
+// Home's scroll content uses 24px of horizontal padding on each side. The hero
+// banner bleeds past it to span the full screen width, so it needs a matching
+// negative margin to cancel that padding out.
 const SCREEN_HORIZONTAL_PADDING = 24;
 const CARD_HEIGHT_RATIO = 0.46;
 
 export function HeroCarousel() {
   const { t } = useLanguage();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-  const cardWidth = Math.round(windowWidth - SCREEN_HORIZONTAL_PADDING * 2);
+  const cardWidth = windowWidth;
   const cardHeight = Math.round(windowHeight * CARD_HEIGHT_RATIO);
 
   const scrollRef = useRef<ScrollView>(null);
@@ -68,8 +68,8 @@ export function HeroCarousel() {
   };
 
   return (
-    <View style={{ width: cardWidth }}>
-      <View className="overflow-hidden rounded-3xl shadow-lg shadow-black/25" style={{ height: cardHeight }}>
+    <View style={{ width: cardWidth, marginHorizontal: -SCREEN_HORIZONTAL_PADDING }}>
+      <View className="overflow-hidden" style={{ height: cardHeight }}>
         <ScrollView
           horizontal
           decelerationRate="fast"
@@ -80,20 +80,12 @@ export function HeroCarousel() {
           showsHorizontalScrollIndicator={false}
         >
           {SLIDES.map((slide) => (
-            <LinearGradient
-              colors={slide.gradient}
-              end={{ x: 1, y: 1 }}
+            <ImageBackground
               key={slide.titleKey}
-              start={{ x: 0, y: 0 }}
-              style={{ width: cardWidth, height: cardHeight }}
+              resizeMode="cover"
+              source={slide.image}
+              style={{ width: cardWidth, height: cardHeight, backgroundColor: "#0B3C73" }}
             >
-              {/* Glass sheen */}
-              <LinearGradient
-                colors={["rgba(255,255,255,0.28)", "rgba(255,255,255,0)"]}
-                end={{ x: 0.6, y: 0.6 }}
-                start={{ x: 0, y: 0 }}
-                style={{ position: "absolute", inset: 0 }}
-              />
               <View className="flex-1 justify-between p-5">
                 <View
                   className="h-12 w-12 items-center justify-center rounded-2xl"
@@ -108,7 +100,7 @@ export function HeroCarousel() {
                   {t(slide.titleKey)}
                 </AppText>
               </View>
-            </LinearGradient>
+            </ImageBackground>
           ))}
         </ScrollView>
 
