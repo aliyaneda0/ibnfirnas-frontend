@@ -55,11 +55,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           SecureStore.getItemAsync(USER_KEY),
         ]);
 
-        if (storedToken) {
-          setToken(storedToken);
-        }
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
+        const parsedUser: AuthUser | null = storedUser ? JSON.parse(storedUser) : null;
+
+        // A session persisted before a mock-user schema change (e.g. `role`
+        // added in the 2026-07-10 auth rebuild) can be missing fields the
+        // rest of the app assumes are always present. Drop it rather than
+        // crash screens that read those fields.
+        if (parsedUser && (!parsedUser.role || !parsedUser.email)) {
+          await Promise.all([
+            SecureStore.deleteItemAsync(TOKEN_KEY),
+            SecureStore.deleteItemAsync(USER_KEY),
+          ]);
+        } else {
+          if (storedToken) {
+            setToken(storedToken);
+          }
+          if (parsedUser) {
+            setUser(parsedUser);
+          }
         }
       } catch (e) {
         console.error("Failed to load auth session", e);

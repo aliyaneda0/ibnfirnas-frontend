@@ -17,17 +17,6 @@ import type { Product, Service } from "@/types/api";
 
 type IconName = keyof typeof Feather.glyphMap;
 
-const ENTRIES: {
-  icon: IconName;
-  href: "/(tabs)/Product" | "/(tabs)/Services" | "/(tabs)/Gallery";
-  titleKey: "products.title" | "services.title" | "gallery.title";
-  color: string;
-}[] = [
-  { icon: "box", href: "/(tabs)/Product", titleKey: "products.title", color: themeColors.primary },
-  { icon: "tool", href: "/(tabs)/Services", titleKey: "services.title", color: themeColors.secondary },
-  { icon: "image", href: "/(tabs)/Gallery", titleKey: "gallery.title", color: themeColors.success },
-];
-
 function FeaturedProductCard({ product }: { product: Product }) {
   return (
     <Pressable
@@ -97,36 +86,6 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
       >
         <HeroCarousel />
-
-        <View className="gap-3">
-          <AppText className="text-sm uppercase tracking-wide" muted>
-            {t("home.quickAccess")}
-          </AppText>
-
-          {ENTRIES.map((entry) => (
-            <Pressable
-              className="flex-row items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-md shadow-black/10 active:opacity-80"
-              key={entry.href}
-              onPress={() => router.push(entry.href)}
-            >
-              <View
-                className="h-12 w-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: `${entry.color}1A` }}
-              >
-                <Feather color={entry.color} name={entry.icon} size={21} />
-              </View>
-              <AppText className="flex-1" variant="subtitle">
-                {t(entry.titleKey)}
-              </AppText>
-              <View
-                className="h-8 w-8 items-center justify-center rounded-full"
-                style={{ backgroundColor: themeColors.background }}
-              >
-                <Feather color={themeColors.textSecondary} name="chevron-right" size={16} />
-              </View>
-            </Pressable>
-          ))}
-        </View>
 
         {featuredProducts && featuredProducts.length > 0 ? (
           <View className="gap-3">

@@ -22,7 +22,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function humanizeRole(role: string) {
+function humanizeRole(role: string | undefined) {
+  if (!role) return "—";
   return role.replace(/^ROLE_/, "").toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
 }
 
