@@ -8,7 +8,7 @@ import { AppHeader } from "@/components/ui/app-header";
 import { AppText } from "@/components/ui/app-text";
 import { HeroCarousel } from "@/components/ui/hero-carousel";
 import { WhatsAppFab } from "@/components/ui/whatsapp-fab";
-import { themeColors } from "@/config/design-tokens";
+import { themeColors, themeFontFamily } from "@/config/design-tokens";
 import { useCompany } from "@/hooks/use-company";
 import { useFeaturedProducts } from "@/hooks/use-products";
 import { useFeaturedServices } from "@/hooks/use-services";
@@ -118,6 +118,31 @@ export default function Home() {
             />
           </View>
         ) : null}
+
+        <View className="gap-3 overflow-hidden rounded-2xl border border-border bg-card p-5">
+          <AppText variant="subtitle">{t("inquiry.title")}</AppText>
+          <AppText className="text-sm" muted>
+            {t("inquiry.subtitle")}
+          </AppText>
+          <Pressable
+            className="mt-1 flex-row items-center justify-center gap-2 rounded-xl active:opacity-85"
+            onPress={() => router.push("/inquiry")}
+            style={{
+              backgroundColor: themeColors.error,
+              paddingVertical: 14,
+              shadowColor: themeColors.error,
+              shadowOpacity: 0.35,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 6 },
+              elevation: 5,
+            }}
+          >
+            <Feather color="#FFFFFF" name="send" size={16} />
+            <AppText style={{ color: "#FFFFFF", fontFamily: themeFontFamily.bold[0], letterSpacing: 0.3 }}>
+              {t("inquiry.submit")}
+            </AppText>
+          </Pressable>
+        </View>
 
         {company?.bannerUrl ? (
           <View className="overflow-hidden rounded-2xl">

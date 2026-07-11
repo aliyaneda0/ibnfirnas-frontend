@@ -42,7 +42,7 @@ export default function TabsLayout() {
           borderWidth: 1,
           borderColor: "rgba(255,255,255,0.4)",
           overflow: "hidden",
-          backgroundColor: Platform.OS === "web" ? `${themeColors.card}F2` : "transparent",
+          backgroundColor: Platform.OS === "web" ? themeColors.card : "transparent",
           elevation: 12,
           shadowColor: themeColors.navy,
           shadowOpacity: 0.18,
@@ -51,7 +51,7 @@ export default function TabsLayout() {
         },
         tabBarBackground: () =>
           Platform.OS === "web" ? null : (
-            <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.55)" }}>
+            <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.92)" }}>
               <BlurView intensity={55} style={{ flex: 1 }} tint="light" />
             </View>
           ),
@@ -80,7 +80,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="Product" options={{ title: "Products" }} />
       <Tabs.Screen name="Services" options={{ title: "Services" }} />
       <Tabs.Screen name="Gallery" options={{ title: "Gallery" }} />
-      <Tabs.Screen name="Profile" options={{ title: "Profile" }} />
+      <Tabs.Screen name="Profile" options={{ href: null, title: "Profile" }} />
     </Tabs>
   );
 }

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Alert, Image, Linking, Modal, Pressable, View } from "react-native";
-import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -67,72 +66,61 @@ export function AppHeader() {
   return (
     <>
       <View
-        className="mx-4 mt-2 flex-row items-center justify-between overflow-hidden rounded-3xl"
+        className="flex-row items-center justify-between px-4 py-2"
         style={{
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.4)",
+          backgroundColor: themeColors.card,
+          borderBottomWidth: 1,
+          borderBottomColor: themeColors.border,
           shadowColor: themeColors.navy,
-          shadowOpacity: 0.12,
-          shadowRadius: 16,
-          shadowOffset: { width: 0, height: 8 },
-          elevation: 6,
+          shadowOpacity: 0.06,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 2,
         }}
       >
-        <BlurView
-          intensity={50}
-          tint="light"
-          style={{ position: "absolute", inset: 0 }}
-        />
-        <View
-          style={{ position: "absolute", inset: 0, backgroundColor: "rgba(255,255,255,0.55)" }}
-        />
-
-        <View className="w-full flex-row items-center justify-between px-4 py-3">
-          <View className="flex-row items-center gap-2.5">
-            <BrandLogo card={false} size={40} />
-            <View>
-              <AppText
-                style={{
-                  color: "#2468AC",
-                  fontFamily: themeFontFamily.bold[0],
-                  fontSize: 17,
-                  letterSpacing: 0.3,
-                  lineHeight: 18,
-                }}
-              >
-                IBN FIRNAS
-              </AppText>
-              <AppText
-                numberOfLines={1}
-                style={{
-                  color: "#2468AC",
-                  fontFamily: themeFontFamily.medium[0],
-                  fontSize: 7.5,
-                  letterSpacing: 0,
-                  lineHeight: 9,
-                  marginTop: 0,
-                  opacity: 0.85,
-                }}
-              >
-                {t("home.tagline").toUpperCase()}
-              </AppText>
-            </View>
+        <View className="flex-row items-center gap-2.5">
+          <BrandLogo card={false} size={34} />
+          <View>
+            <AppText
+              style={{
+                color: "#2468AC",
+                fontFamily: themeFontFamily.display[0],
+                fontSize: 19,
+                letterSpacing: 0.3,
+                lineHeight: 20,
+              }}
+            >
+              IBN FIRNAS
+            </AppText>
+            <AppText
+              numberOfLines={1}
+              style={{
+                color: "#2468AC",
+                fontFamily: themeFontFamily.medium[0],
+                fontSize: 7.5,
+                letterSpacing: 0,
+                lineHeight: 9,
+                marginTop: 0,
+                opacity: 0.85,
+              }}
+            >
+              {t("home.tagline").toUpperCase()}
+            </AppText>
           </View>
-
-          <Pressable
-            accessibilityLabel={t("menu.myProfile")}
-            accessibilityRole="button"
-            className="h-10 w-10 items-center justify-center overflow-hidden rounded-full active:opacity-80"
-            onPress={() => setIsMenuOpen(true)}
-            style={{ backgroundColor: "rgba(255,255,255,0.5)" }}
-          >
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={{ height: 40, width: 40 }} />
-            ) : (
-              <Feather color={themeColors.primary} name="user" size={18} />
-            )}
-          </Pressable>
         </View>
+
+        <Pressable
+          accessibilityLabel={t("menu.myProfile")}
+          accessibilityRole="button"
+          className="h-9 w-9 items-center justify-center overflow-hidden rounded-full active:opacity-80"
+          onPress={() => setIsMenuOpen(true)}
+        >
+          {user?.avatarUrl ? (
+            <Image source={{ uri: user.avatarUrl }} style={{ height: 36, width: 36 }} />
+          ) : (
+            <Feather color={themeColors.primary} name="user" size={17} />
+          )}
+        </Pressable>
       </View>
 
       <Modal
