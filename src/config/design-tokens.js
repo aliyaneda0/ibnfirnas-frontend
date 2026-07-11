@@ -28,6 +28,7 @@ const themeFontFamily = {
   sans: ["Poppins_400Regular"],
   medium: ["IBMPlexSans_600SemiBold"],
   bold: ["IBMPlexSans_700Bold"],
+  display: ["Anton_400Regular"], // bold condensed wordmark treatment — splash screen only
 };
 
 module.exports = {

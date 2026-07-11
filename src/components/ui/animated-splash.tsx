@@ -12,6 +12,10 @@ const useNativeDriver = Platform.OS !== 'web';
 // app-ready resolving instantly.
 const HOLD_BEFORE_EXIT_MS = 500;
 
+const WORDMARK = 'IBN FIRNAS';
+const TYPE_CHAR_MS = 70;
+const COLOR_TRANSITION_MS = 400;
+
 interface AnimatedSplashProps {
   onAnimationComplete: () => void;
   isAppReady: boolean;
@@ -22,9 +26,12 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
   const logoScale = useRef(new Animated.Value(0.9)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
 
-  // Wordmark entrance values — animates in just after the logo, not before it
-  const textOpacity = useRef(new Animated.Value(0)).current;
-  const textTranslateY = useRef(new Animated.Value(8)).current;
+  // Wordmark typewriter — characters are revealed one at a time (in teal,
+  // readable against the now-light splash background), then wordmarkColor
+  // animates the fill from teal to brand blue once the full name is typed out.
+  const [displayedText, setDisplayedText] = useState('');
+  const wordmarkColor = useRef(new Animated.Value(0)).current;
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Progress dot pulse
   const dotOpacity = useRef(new Animated.Value(0.3)).current;
@@ -36,40 +43,42 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
   const [readyToExit, setReadyToExit] = useState(false);
 
   // Entrance animation — runs once on mount. The logo fully settles with a
-  // gentle spring before the wordmark starts fading in beneath it, so the
-  // sequence always reads as "logo, then text".
+  // gentle spring before the wordmark starts typing itself out beneath it,
+  // so the sequence always reads as "logo, then text".
   useEffect(() => {
-    Animated.sequence([
-      Animated.parallel([
-        Animated.timing(logoOpacity, {
-          toValue: 1,
-          duration: 280,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: useNativeDriver,
-        }),
-        Animated.timing(logoScale, {
-          toValue: 1,
-          duration: 280,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.parallel([
-        Animated.timing(textOpacity, {
-          toValue: 1,
-          duration: 320,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: useNativeDriver,
-        }),
-        Animated.timing(textTranslateY, {
-          toValue: 0,
-          duration: 320,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]),
+    const typeNextChar = (index: number) => {
+      setDisplayedText(WORDMARK.slice(0, index));
+      if (index < WORDMARK.length) {
+        typingTimeoutRef.current = setTimeout(() => typeNextChar(index + 1), TYPE_CHAR_MS);
+        return;
+      }
+
+      // Typing finished — settle the wordmark from teal into brand blue.
+      Animated.timing(wordmarkColor, {
+        toValue: 1,
+        duration: COLOR_TRANSITION_MS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start(() => {
+        setTimeout(() => setReadyToExit(true), HOLD_BEFORE_EXIT_MS);
+      });
+    };
+
+    Animated.parallel([
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 280,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: useNativeDriver,
+      }),
+      Animated.timing(logoScale, {
+        toValue: 1,
+        duration: 280,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
     ]).start(() => {
-      setTimeout(() => setReadyToExit(true), HOLD_BEFORE_EXIT_MS);
+      typeNextChar(0);
     });
 
     // Looping pulse for the "loading" dot. Phase 1 has no global data
@@ -92,6 +101,10 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
         }),
       ])
     ).start();
+
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
   }, []);
 
   // Exit animation — runs once the app is ready AND the entrance has held
@@ -129,7 +142,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
       ]}
     >
       <LinearGradient
-        colors={[themeColors.navy, themeColors.primary]}
+        colors={[themeColors.surfaceMuted, themeColors.sky]}
         end={{ x: 1, y: 1 }}
         start={{ x: 0, y: 0 }}
         style={StyleSheet.absoluteFill}
@@ -148,12 +161,14 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
         style={[
           styles.wordmark,
           {
-            opacity: textOpacity,
-            transform: [{ translateY: textTranslateY }],
+            color: wordmarkColor.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['#39ADAE', '#2468AC'],
+            }),
           },
         ]}
       >
-        IBN FIRNAS
+        {displayedText}
       </Animated.Text>
 
       <View className="mt-6 flex-row items-center justify-center">
@@ -172,16 +187,15 @@ const styles = StyleSheet.create({
   },
   wordmark: {
     marginTop: 16,
-    color: themeColors.sky,
-    fontFamily: themeFontFamily.bold[0],
-    fontSize: 24,
-    letterSpacing: 1,
+    fontFamily: themeFontFamily.display[0],
+    fontSize: 28,
+    letterSpacing: 0.5,
     textAlign: 'center',
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2468AC',
   },
 });

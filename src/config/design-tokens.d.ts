@@ -23,4 +23,5 @@ export const themeFontFamily: {
   sans: [string];
   medium: [string];
   bold: [string];
+  display: [string];
 };
