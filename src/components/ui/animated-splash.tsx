@@ -22,8 +22,9 @@ interface AnimatedSplashProps {
 }
 
 export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSplashProps) {
-  // Logo entrance values — scale-up-from-90%-to-100% + fade-in, per spec
-  const logoScale = useRef(new Animated.Value(0.9)).current;
+  // Logo entrance values — pops in from 0 with a springy overshoot, fading
+  // in as it settles, rather than a plain static fade.
+  const logoScale = useRef(new Animated.Value(0)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
 
   // Wordmark typewriter — characters are revealed one at a time (in teal,
@@ -67,14 +68,14 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
     Animated.parallel([
       Animated.timing(logoOpacity, {
         toValue: 1,
-        duration: 280,
+        duration: 350,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: useNativeDriver,
       }),
       Animated.timing(logoScale, {
         toValue: 1,
-        duration: 280,
-        easing: Easing.out(Easing.cubic),
+        duration: 550,
+        easing: Easing.out(Easing.back(1.7)),
         useNativeDriver: true,
       }),
     ]).start(() => {
@@ -154,7 +155,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
           transform: [{ scale: logoScale }],
         }}
       >
-        <BrandLogo size={100} />
+        <BrandLogo card={false} size={100} />
       </Animated.View>
 
       <Animated.Text
