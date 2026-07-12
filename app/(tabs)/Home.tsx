@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AppHeader } from "@/components/ui/app-header";
 import { AppText } from "@/components/ui/app-text";
 import { HeroCarousel } from "@/components/ui/hero-carousel";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/state-view";
 import { WhatsAppFab } from "@/components/ui/whatsapp-fab";
 import { themeColors, themeFontFamily } from "@/config/design-tokens";
 import { useCompany } from "@/hooks/use-company";
@@ -50,6 +52,45 @@ function FeaturedServiceCard({ service }: { service: Service }) {
   );
 }
 
+function FeaturedCardSkeleton() {
+  return (
+    <View className="w-40 gap-2 rounded-2xl border border-border bg-card p-2">
+      <Skeleton borderRadius={12} height={100} />
+      <Skeleton height={14} width="90%" />
+      <Skeleton height={14} width="50%" />
+    </View>
+  );
+}
+
+function FeaturedRowSkeleton() {
+  return (
+    <View className="flex-row gap-3">
+      <FeaturedCardSkeleton />
+      <FeaturedCardSkeleton />
+      <FeaturedCardSkeleton />
+    </View>
+  );
+}
+
+function CompanySectionSkeleton() {
+  return (
+    <View className="gap-3">
+      <View className="overflow-hidden rounded-2xl">
+        <Skeleton borderRadius={0} height={140} />
+        <View className="gap-2 border border-t-0 border-border bg-card p-4">
+          <Skeleton height={16} width="50%" />
+          <Skeleton height={13} width="100%" />
+          <Skeleton height={13} width="80%" />
+        </View>
+      </View>
+      <Skeleton height={12} width="30%" />
+      <Skeleton borderRadius={12} height={52} />
+      <Skeleton borderRadius={12} height={52} />
+      <Skeleton borderRadius={12} height={52} />
+    </View>
+  );
+}
+
 function ContactRow({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
   return (
     <Pressable
@@ -72,9 +113,9 @@ function ContactRow({ icon, label, onPress }: { icon: IconName; label: string; o
 
 export default function Home() {
   const { t } = useLanguage();
-  const { data: company } = useCompany();
-  const { data: featuredProducts } = useFeaturedProducts();
-  const { data: featuredServices } = useFeaturedServices();
+  const { data: company, isLoading: isCompanyLoading } = useCompany();
+  const { data: featuredProducts, isLoading: isFeaturedProductsLoading } = useFeaturedProducts();
+  const { data: featuredServices, isLoading: isFeaturedServicesLoading } = useFeaturedServices();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -87,11 +128,13 @@ export default function Home() {
       >
         <HeroCarousel />
 
-        {featuredProducts && featuredProducts.length > 0 ? (
-          <View className="gap-3">
-            <AppText className="text-sm uppercase tracking-wide" muted>
-              {t("home.featuredProducts")}
-            </AppText>
+        <View className="gap-3">
+          <AppText className="text-sm uppercase tracking-wide" muted>
+            {t("home.featuredProducts")}
+          </AppText>
+          {isFeaturedProductsLoading ? (
+            <FeaturedRowSkeleton />
+          ) : featuredProducts && featuredProducts.length > 0 ? (
             <FlatList
               contentContainerStyle={{ gap: 12 }}
               data={featuredProducts}
@@ -100,14 +143,18 @@ export default function Home() {
               renderItem={({ item }) => <FeaturedProductCard product={item} />}
               showsHorizontalScrollIndicator={false}
             />
-          </View>
-        ) : null}
+          ) : (
+            <EmptyState icon="box" message={t("home.featuredProductsEmpty")} />
+          )}
+        </View>
 
-        {featuredServices && featuredServices.length > 0 ? (
-          <View className="gap-3">
-            <AppText className="text-sm uppercase tracking-wide" muted>
-              {t("home.featuredServices")}
-            </AppText>
+        <View className="gap-3">
+          <AppText className="text-sm uppercase tracking-wide" muted>
+            {t("home.featuredServices")}
+          </AppText>
+          {isFeaturedServicesLoading ? (
+            <FeaturedRowSkeleton />
+          ) : featuredServices && featuredServices.length > 0 ? (
             <FlatList
               contentContainerStyle={{ gap: 12 }}
               data={featuredServices}
@@ -116,8 +163,10 @@ export default function Home() {
               renderItem={({ item }) => <FeaturedServiceCard service={item} />}
               showsHorizontalScrollIndicator={false}
             />
-          </View>
-        ) : null}
+          ) : (
+            <EmptyState icon="tool" message={t("home.featuredServicesEmpty")} />
+          )}
+        </View>
 
         <View className="gap-3 overflow-hidden rounded-2xl border border-border bg-card p-5">
           <AppText variant="subtitle">{t("inquiry.title")}</AppText>
@@ -144,46 +193,52 @@ export default function Home() {
           </Pressable>
         </View>
 
-        {company?.bannerUrl ? (
-          <View className="overflow-hidden rounded-2xl">
-            <Image contentFit="cover" source={{ uri: company.bannerUrl }} style={{ height: 140, width: "100%" }} />
-            <View className="gap-1 border border-t-0 border-border bg-card p-4">
-              <AppText variant="subtitle">{company.name}</AppText>
-              <AppText className="text-sm" muted numberOfLines={3}>
-                {company.description}
-              </AppText>
-            </View>
-          </View>
-        ) : null}
+        {isCompanyLoading ? (
+          <CompanySectionSkeleton />
+        ) : !company ? (
+          <EmptyState icon="info" message={t("home.companyEmpty")} />
+        ) : (
+          <>
+            {company.bannerUrl ? (
+              <View className="overflow-hidden rounded-2xl">
+                <Image contentFit="cover" source={{ uri: company.bannerUrl }} style={{ height: 140, width: "100%" }} />
+                <View className="gap-1 border border-t-0 border-border bg-card p-4">
+                  <AppText variant="subtitle">{company.name}</AppText>
+                  <AppText className="text-sm" muted numberOfLines={3}>
+                    {company.description}
+                  </AppText>
+                </View>
+              </View>
+            ) : null}
 
-        {company ? (
-          <View className="gap-3">
-            <AppText className="text-sm uppercase tracking-wide" muted>
-              {t("home.contactUs")}
-            </AppText>
-            {company.phone ? (
-              <ContactRow
-                icon="phone"
-                label={company.phone}
-                onPress={() => Linking.openURL(`tel:${company.phone}`)}
-              />
-            ) : null}
-            {company.email ? (
-              <ContactRow
-                icon="mail"
-                label={company.email}
-                onPress={() => Linking.openURL(`mailto:${company.email}`)}
-              />
-            ) : null}
-            {company.address ? (
-              <ContactRow
-                icon="map-pin"
-                label={company.address}
-                onPress={() => company.googleMapsUrl && Linking.openURL(company.googleMapsUrl)}
-              />
-            ) : null}
-          </View>
-        ) : null}
+            <View className="gap-3">
+              <AppText className="text-sm uppercase tracking-wide" muted>
+                {t("home.contactUs")}
+              </AppText>
+              {company.phone ? (
+                <ContactRow
+                  icon="phone"
+                  label={company.phone}
+                  onPress={() => Linking.openURL(`tel:${company.phone}`)}
+                />
+              ) : null}
+              {company.email ? (
+                <ContactRow
+                  icon="mail"
+                  label={company.email}
+                  onPress={() => Linking.openURL(`mailto:${company.email}`)}
+                />
+              ) : null}
+              {company.address ? (
+                <ContactRow
+                  icon="map-pin"
+                  label={company.address}
+                  onPress={() => company.googleMapsUrl && Linking.openURL(company.googleMapsUrl)}
+                />
+              ) : null}
+            </View>
+          </>
+        )}
       </ScrollView>
 
       <WhatsAppFab bottomOffset={100} message={t("home.whatsappMessage")} />

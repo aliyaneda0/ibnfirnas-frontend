@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 
+import { addMockInquiry } from "@/mocks/inquiries";
 import type { Inquiry, InquiryRequest } from "@/types/api";
 
 const SUBMIT_DELAY_MS = 500;
@@ -21,13 +22,15 @@ export function useSubmitInquiry() {
           reject(err);
           return;
         }
-        resolve({
+        const inquiry: Inquiry = {
           ...request,
           id: mockInquiryId++,
           status: "OPEN",
           priority: "NORMAL",
           createdAt: new Date().toISOString(),
-        });
+        };
+        addMockInquiry(inquiry);
+        resolve(inquiry);
       }, SUBMIT_DELAY_MS);
     });
   }, []);

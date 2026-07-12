@@ -11,7 +11,7 @@ import { AppText } from "./app-text";
 import { BrandLogo } from "./brand-logo";
 
 type MenuAction =
-  | { type: "route"; href: "/(tabs)/Profile" | "/(auth)/login" | "/inquiry" }
+  | { type: "route"; href: "/(tabs)/Profile" | "/(auth)/login" | "/inquiry" | "/inquiries" }
   | { type: "language" }
   | { type: "call" }
   | { type: "about" };
@@ -25,7 +25,7 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { icon: "user", labelKey: "menu.myProfile", action: { type: "route", href: "/(tabs)/Profile" } },
   { icon: "globe", labelKey: "menu.language", action: { type: "language" } },
-  { icon: "help-circle", labelKey: "menu.myInquiries", action: { type: "route", href: "/inquiry" } },
+  { icon: "help-circle", labelKey: "menu.myInquiries", action: { type: "route", href: "/inquiries" } },
   { icon: "phone", labelKey: "menu.contactSupport", action: { type: "call" } },
   { icon: "info", labelKey: "menu.aboutUs", action: { type: "about" } },
 ];
@@ -66,16 +66,14 @@ export function AppHeader() {
   return (
     <>
       <View
-        className="flex-row items-center justify-between px-4 py-2"
+        className="mx-4 mt-2 flex-row items-center justify-between rounded-3xl px-4 py-2"
         style={{
-          backgroundColor: themeColors.card,
-          borderBottomWidth: 1,
-          borderBottomColor: themeColors.border,
+          backgroundColor: "#39ADAE",
           shadowColor: themeColors.navy,
-          shadowOpacity: 0.06,
-          shadowRadius: 8,
-          shadowOffset: { width: 0, height: 2 },
-          elevation: 2,
+          shadowOpacity: 0.18,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: 8 },
+          elevation: 6,
         }}
       >
         <View className="flex-row items-center gap-2.5">
@@ -83,7 +81,7 @@ export function AppHeader() {
           <View>
             <AppText
               style={{
-                color: "#2468AC",
+                color: themeColors.navy,
                 fontFamily: themeFontFamily.display[0],
                 fontSize: 19,
                 letterSpacing: 0.3,
@@ -95,7 +93,7 @@ export function AppHeader() {
             <AppText
               numberOfLines={1}
               style={{
-                color: "#2468AC",
+                color: themeColors.navy,
                 fontFamily: themeFontFamily.medium[0],
                 fontSize: 7.5,
                 letterSpacing: 0,
@@ -118,7 +116,7 @@ export function AppHeader() {
           {user?.avatarUrl ? (
             <Image source={{ uri: user.avatarUrl }} style={{ height: 36, width: 36 }} />
           ) : (
-            <Feather color={themeColors.primary} name="user" size={17} />
+            <Feather color={themeColors.navy} name="user" size={17} />
           )}
         </Pressable>
       </View>
