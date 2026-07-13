@@ -1,7 +1,7 @@
 const themeColors = {
   // Spec palette (v1 integration spec, 2026-07-10) — descriptive keys, use
   // these in new code.
-  navy: '#0B1F3A',          // deepest shade — gradients, splash bg
+  navy: '#276DB2',          // deepest shade — gradients, splash bg
   primary: '#2E6FE0',       // app name / title / active tab / primary buttons
   primaryLight: '#5B9BF0',  // hover/pressed states, gradient end-stop
   sky: '#8FD3FF',           // gradient accents, glass tints, subtle highlights

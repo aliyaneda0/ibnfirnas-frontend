@@ -7,7 +7,7 @@ export type Language = "en" | "ar";
 
 const LANGUAGE_KEY = "app-language";
 
-type TranslationKey = keyof typeof translations.en;
+export type TranslationKey = keyof typeof translations.en;
 
 type LanguageContextValue = {
   language: Language;

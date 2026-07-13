@@ -123,7 +123,7 @@ export default function Home() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ gap: 24, padding: 24, paddingBottom: 180 }}
+        contentContainerStyle={{ gap: 24, paddingTop: 12, paddingHorizontal: 24, paddingBottom: 180 ,marginTop:0}}
         keyboardShouldPersistTaps="handled"
       >
         <HeroCarousel />

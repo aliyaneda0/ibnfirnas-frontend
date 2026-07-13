@@ -66,9 +66,9 @@ export function AppHeader() {
   return (
     <>
       <View
-        className="mx-4 mt-2 flex-row items-center justify-between rounded-3xl px-4 py-2"
+        className="mx-4 mt-5 flex-row items-center justify-between rounded-3xl px-4 py-3"
         style={{
-          backgroundColor: "#39ADAE",
+          backgroundColor: "#ffffff",
           shadowColor: themeColors.navy,
           shadowOpacity: 0.18,
           shadowRadius: 16,
@@ -77,7 +77,7 @@ export function AppHeader() {
         }}
       >
         <View className="flex-row items-center gap-2.5">
-          <BrandLogo card={false} size={34} />
+          <BrandLogo card={false} size={36} />
           <View>
             <AppText
               style={{
@@ -85,7 +85,7 @@ export function AppHeader() {
                 fontFamily: themeFontFamily.display[0],
                 fontSize: 19,
                 letterSpacing: 0.3,
-                lineHeight: 20,
+                lineHeight:22,
               }}
             >
               IBN FIRNAS
@@ -94,10 +94,10 @@ export function AppHeader() {
               numberOfLines={1}
               style={{
                 color: themeColors.navy,
-                fontFamily: themeFontFamily.medium[0],
-                fontSize: 7.5,
+                fontFamily: themeFontFamily.display[0],
+                fontSize: 8,
                 letterSpacing: 0,
-                lineHeight: 9,
+                lineHeight: 10,
                 marginTop: 0,
                 opacity: 0.85,
               }}
@@ -110,7 +110,7 @@ export function AppHeader() {
         <Pressable
           accessibilityLabel={t("menu.myProfile")}
           accessibilityRole="button"
-          className="h-9 w-9 items-center justify-center overflow-hidden rounded-full active:opacity-80"
+          className="h-12 w-10 items-center justify-center overflow-hidden rounded-0 active:opacity-80"
           onPress={() => setIsMenuOpen(true)}
         >
           {user?.avatarUrl ? (
