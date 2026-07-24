@@ -6,6 +6,8 @@ import {
   IBMPlexSans_600SemiBold,
   IBMPlexSans_700Bold,
 } from "@expo-google-fonts/ibm-plex-sans";
+import { Anton_400Regular } from "@expo-google-fonts/anton";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "@/features/auth/auth-provider";
 import { AnimatedSplash } from "@/components/ui/animated-splash";
@@ -20,6 +22,7 @@ function RootLayoutContent() {
     Poppins_400Regular,
     IBMPlexSans_600SemiBold,
     IBMPlexSans_700Bold,
+    Anton_400Regular,
   });
   const [splashAnimationComplete, setSplashAnimationComplete] = useState(false);
   const isAppReady = fontsLoaded && !authLoading;
@@ -43,12 +46,14 @@ function RootLayoutContent() {
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <LanguageProvider>
-          <RootLayoutContent />
-        </LanguageProvider>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <RootLayoutContent />
+          </LanguageProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

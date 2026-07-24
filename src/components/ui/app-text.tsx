@@ -38,7 +38,7 @@ export function AppText({
   // fall back to a system font the way browsers do, so it can render blank.
   // Arabic text skips our custom fonts entirely and uses the platform default.
   const isLatinScript = language !== "ar";
-  const toneClass = muted ? "text-subText" : "text-text";
+  const toneClass = muted ? "text-textSecondary" : "text-text";
   const fontClassName = isLatinScript && variant === "body" ? "font-sans" : "";
   const fontFamily = isLatinScript ? variantFontFamily[variant] : undefined;
 

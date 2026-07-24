@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Alert, Image, KeyboardAvoidingView, Platform, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { AppText } from "@/components/ui/app-text";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { TextField } from "@/components/ui/text-field";
@@ -15,7 +16,7 @@ export default function LoginScreen() {
   const { login } = useAuth();
   const { t } = useLanguage();
 
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +24,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setIsSubmitting(true);
     try {
-      await login(phone, password);
+      await login(email, password);
       router.replace("/(tabs)/Home");
     } catch (error) {
       Alert.alert(t("auth.loginTitle"), (error as Error).message);
@@ -38,12 +39,8 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
         <View className="flex-1 px-6 pb-8 pt-36">
           <View className="items-center gap-2">
-            <View className="mb-2 items-center justify-center rounded-2xl bg-white p-1.5">
-              <Image
-                source={require("../../assets/images/splash-icon.png")}
-                style={{ width: 76, height: 76 }}
-                resizeMode="contain"
-              />
+            <View className="mb-2">
+              <BrandLogo size={92} />
             </View>
             <AppText className="text-3xl pt-2" style={{ color: "#FFFFFF" }} variant="title">
               {t("auth.loginTitle")}
@@ -55,11 +52,12 @@ export default function LoginScreen() {
 
           <View className="mt-8 gap-4">
             <TextField
-              keyboardType="phone-pad"
-              leftIcon="phone"
-              onChangeText={setPhone}
-              placeholder={t("auth.phone")}
-              value={phone}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              leftIcon="mail"
+              onChangeText={setEmail}
+              placeholder={t("auth.email")}
+              value={email}
               variant="dark"
             />
             <TextField
@@ -72,6 +70,13 @@ export default function LoginScreen() {
               value={password}
               variant="dark"
             />
+            <AppText
+              className="self-end text-sm underline"
+              onPress={() => router.push("/(auth)/forgot-password")}
+              style={{ color: "#CBD5E1" }}
+            >
+              {t("auth.forgotPassword")}
+            </AppText>
           </View>
 
           <View className="mt-6 gap-6">
@@ -89,7 +94,7 @@ export default function LoginScreen() {
               <AppText
                 className="text-sm underline"
                 onPress={() => router.push("/(auth)/signup")}
-                style={{ color: themeColors.accent }}
+                style={{ color: themeColors.sky }}
               >
                 {t("auth.signup")}
               </AppText>
