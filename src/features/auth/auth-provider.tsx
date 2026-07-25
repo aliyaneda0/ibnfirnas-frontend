@@ -1,10 +1,21 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "expo-secure-store";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-import type { Profile, UserRole } from "@/types/api";
+import { apiRequest } from "@/lib/api";
+import type { ApiEnvelope, AuthSession, Profile } from "@/types/api";
 
 const TOKEN_KEY = "auth-token";
 const USER_KEY = "auth-user";
+const GOOGLE_WEB_CLIENT_ID =
+  "846196045966-m9jpl8ut2odlevjp18k6fjnu7chlr268.apps.googleusercontent.com";
+
+const GOOGLE_ANDROID_CLIENT_ID =
+  "846196045966-p7snvmifi5os055ps4cpa1l1r0558jgh.apps.googleusercontent.com";
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
 
 type AuthUser = Profile;
 
@@ -23,24 +34,28 @@ type AuthContextType = {
   user: AuthUser | null;
   token: string | null;
   isLoading: boolean;
+
   login: (email: string, password: string) => Promise<void>;
+
+  googleLogin: () => Promise<void>;
+
   register: (input: RegisterInput) => Promise<void>;
+
   logout: () => Promise<void>;
+
   updateProfile: (updates: ProfileUpdateInput) => Promise<void>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<void>;
+
   forgotPassword: (email: string) => Promise<void>;
+
   resetPassword: (token: string, newPassword: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// No backend yet — this mocks auth locally and persists only the token/user
-// on-device. Shaped exactly like `GET /api/profile` + `POST /api/auth/*` so
-// wiring the real API later only touches this file, not any screen.
-let mockUserId = 1;
-function createMockToken() {
-  return `mock-token-${Date.now()}`;
-}
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -48,127 +63,135 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const bootstrap = async () => {
-      try {
-        const [storedToken, storedUser] = await Promise.all([
-          SecureStore.getItemAsync(TOKEN_KEY),
-          SecureStore.getItemAsync(USER_KEY),
-        ]);
-
-        const parsedUser: AuthUser | null = storedUser ? JSON.parse(storedUser) : null;
-
-        // A session persisted before a mock-user schema change (e.g. `role`
-        // added in the 2026-07-10 auth rebuild) can be missing fields the
-        // rest of the app assumes are always present. Drop it rather than
-        // crash screens that read those fields.
-        if (parsedUser && (!parsedUser.role || !parsedUser.email)) {
-          await Promise.all([
-            SecureStore.deleteItemAsync(TOKEN_KEY),
-            SecureStore.deleteItemAsync(USER_KEY),
-          ]);
-        } else {
-          if (storedToken) {
-            setToken(storedToken);
-          }
-          if (parsedUser) {
-            setUser(parsedUser);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load auth session", e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     bootstrap();
   }, []);
 
-  const persistSession = async (nextToken: string, nextUser: AuthUser) => {
+  const bootstrap = async () => {
     try {
-      await SecureStore.setItemAsync(TOKEN_KEY, nextToken);
-      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(nextUser));
-    } catch (e) {
-      // Don't block the session on a storage failure — the user stays logged in for this run.
-      console.error("Failed to persist auth session", e);
+      const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+
+      if (!storedToken) {
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+        method: "GET",
+        token: storedToken,
+      });
+
+      setToken(storedToken);
+      setUser(response.data);
+
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.data));
+    } catch (error) {
+      console.log("Session expired");
+
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(USER_KEY);
+
+      setToken(null);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
     }
-    setToken(nextToken);
-    setUser(nextUser);
+  };
+
+  const persistSession = async (jwt: string, profile: AuthUser) => {
+    await SecureStore.setItemAsync(TOKEN_KEY, jwt);
+    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(profile));
+
+    setToken(jwt);
+    setUser(profile);
   };
 
   const login = async (email: string, password: string) => {
-    if (!email.trim() || !password.trim()) {
-      throw new Error("Email and password are required");
-    }
-
-    await persistSession(createMockToken(), {
-      id: mockUserId++,
-      email,
-      fullName: email.split("@")[0],
-      phone: null,
-      avatarUrl: null,
-      role: "ROLE_USER" as UserRole,
-      isActive: true,
-      createdAt: new Date().toISOString(),
+    const auth = await apiRequest<ApiEnvelope<AuthSession>>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
     });
+
+    const jwt = auth.data.token;
+
+    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+      method: "GET",
+      token: jwt,
+    });
+
+    await persistSession(jwt, profile.data);
   };
 
-  const register = async ({ fullName, email, password, phone }: RegisterInput) => {
-    if (!fullName.trim() || !email.trim() || password.trim().length < 6) {
-      throw new Error("Full name, email, and a password of at least 6 characters are required");
-    }
+  const googleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
 
-    // Real `POST /api/auth/register` returns a token directly — auto-login,
-    // no separate login call and no OTP step.
-    await persistSession(createMockToken(), {
-      id: mockUserId++,
-      email,
-      fullName,
-      phone: phone?.trim() || null,
-      avatarUrl: null,
-      role: "ROLE_USER" as UserRole,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    });
+      const userInfo = await GoogleSignin.signIn();
+
+      const idToken = userInfo.data?.idToken;
+
+      if (!idToken) {
+        throw new Error("No Google ID Token received");
+      }
+
+      const auth = await apiRequest<ApiEnvelope<AuthSession>>(
+        "/api/auth/google",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            idToken,
+          }),
+        },
+      );
+
+      const jwt = auth.data.token;
+
+      const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+        method: "GET",
+        token: jwt,
+      });
+
+      await persistSession(jwt, profile.data);
+    } catch (error: any) {
+     console.error("Google login failed:", error);
+     throw error;
+    }
+  };
+
+  const register = async (_input: RegisterInput) => {
+    throw new Error(
+      "Registration is not implemented yet. Use Google Sign In or backend registration.",
+    );
   };
 
   const updateProfile = async (updates: ProfileUpdateInput) => {
-    if (!user) return;
-    await persistSession(token ?? createMockToken(), { ...user, ...updates });
+    if (!user || !token) return;
+
+    const updated = {
+      ...user,
+      ...updates,
+    };
+
+    await persistSession(token, updated);
   };
 
-  const changePassword = async (currentPassword: string, newPassword: string) => {
-    if (!currentPassword.trim()) {
-      throw new Error("Current password is required to set new password");
-    }
-    if (newPassword.trim().length < 6) {
-      throw new Error("New password must be at least 6 characters");
-    }
-    // Mocked — nothing to persist, the backend owns the password hash.
+  const changePassword = async (
+    _currentPassword: string,
+    _newPassword: string,
+  ) => {
+    throw new Error("Not implemented yet");
   };
 
-  const forgotPassword = async (_email: string) => {
-    // Mocked — always resolves with a generic confirmation, regardless of
-    // whether the email is registered (matches the real endpoint's behavior).
-  };
+  const forgotPassword = async (_email: string) => {};
 
-  const resetPassword = async (token: string, newPassword: string) => {
-    if (!token.trim()) {
-      throw new Error("Reset token is required");
-    }
-    if (newPassword.trim().length < 6) {
-      throw new Error("New password must be at least 6 characters");
-    }
-    // Mocked — nothing to persist yet.
-  };
+  const resetPassword = async (_token: string, _newPassword: string) => {};
 
   const logout = async () => {
-    try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
-      await SecureStore.deleteItemAsync(USER_KEY);
-    } catch (e) {
-      console.error("Failed to clear auth session", e);
-    }
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync(USER_KEY);
+
     setToken(null);
     setUser(null);
   };
@@ -180,6 +203,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         token,
         isLoading,
         login,
+        googleLogin,
         register,
         logout,
         updateProfile,
