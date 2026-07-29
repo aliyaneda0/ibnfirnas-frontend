@@ -8,13 +8,15 @@ import type { ApiEnvelope, AuthSession, Profile } from "@/types/api";
 const TOKEN_KEY = "auth-token";
 const USER_KEY = "auth-user";
 const GOOGLE_WEB_CLIENT_ID =
-  "846196045966-m9jpl8ut2odlevjp18k6fjnu7chlr268.apps.googleusercontent.com";
+  "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com";
 
 const GOOGLE_ANDROID_CLIENT_ID =
-  "846196045966-p7snvmifi5os055ps4cpa1l1r0558jgh.apps.googleusercontent.com";
+  "282521229458-lujh1akh0qvnsugtahadjc4hc58otet9.apps.googleusercontent.com";
 
 GoogleSignin.configure({
-  webClientId: GOOGLE_WEB_CLIENT_ID,
+  webClientId:
+    "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com",
+  offlineAccess: true,
 });
 
 type AuthUser = Profile;
@@ -67,6 +69,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const bootstrap = async () => {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync(USER_KEY);
     try {
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
 
@@ -146,24 +150,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       );
 
+      console.log("Google Auth Response:", auth);
+
       const jwt = auth.data.token;
+      console.log("JWT:", jwt);
 
       const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
         method: "GET",
         token: jwt,
       });
 
+      console.log("Profile:", profile);
+
       await persistSession(jwt, profile.data);
     } catch (error: any) {
-     console.error("Google login failed:", error);
-     throw error;
+      console.log("Google Error:", error);
+      console.log("Google Error Message:", error?.message);
+
+      throw error;
     }
   };
 
-  const register = async (_input: RegisterInput) => {
-    throw new Error(
-      "Registration is not implemented yet. Use Google Sign In or backend registration.",
+  const register = async (input: RegisterInput) => {
+    const auth = await apiRequest<ApiEnvelope<AuthSession>>(
+      "/api/auth/register",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
     );
+
+    const jwt = auth.data.token;
+
+    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+      method: "GET",
+      token: jwt,
+    });
+
+    await persistSession(jwt, profile.data);
   };
 
   const updateProfile = async (updates: ProfileUpdateInput) => {
