@@ -1,6 +1,6 @@
-import { Pressable, View } from "react-native";
+import type { ComponentProps } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
 
 import { themeColors } from "@/config/design-tokens";
@@ -17,26 +17,36 @@ const TAB_ICONS: Record<string, { active: IconName; inactive: IconName }> = {
 
 const BAR_TINT = "#39ADAE";
 
-function CustomTabBar({ state, descriptors, navigation, insets }: BottomTabBarProps) {
+// Derived from `Tabs`' own `tabBar` prop rather than imported from
+// `@react-navigation/bottom-tabs` directly — expo-router bundles its own
+// (structurally identical but nominally distinct) copy of this type, and
+// importing the upstream one causes a spurious mismatch when spreading
+// `props` from the `tabBar` render callback into this component.
+type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
+
+function CustomTabBar({ state, descriptors, navigation, insets }: TabBarProps) {
   // `href: null` screens (Profile) get `tabBarItemStyle: { display: 'none' }`
   // from expo-router — skip them here too so the bar only shows real tabs.
+  // `tabBarItemStyle` is a `StyleProp<ViewStyle>` (can be `false`, an array,
+  // etc.), so it's flattened to a plain style object before reading `display`.
   const visibleRoutes = state.routes.filter(
-    (route) => descriptors[route.key].options.tabBarItemStyle?.display !== "none",
+    (route) =>
+      StyleSheet.flatten(descriptors[route.key].options.tabBarItemStyle)?.display !== "none",
   );
 
   return (
     <View
       style={{
         position: "absolute",
-        left: 28,
-        right: 28,
+        left: 34,
+        right: 34,
         bottom: insets.bottom + 12,
-        height: 64,
+        height:56,
         borderRadius: 28,
         borderWidth: 1,
         borderColor: "rgba(255,255,255,0.4)",
         overflow: "hidden",
-        backgroundColor: BAR_TINT,
+        backgroundColor: themeColors.navy,
         elevation: 12,
         shadowColor: themeColors.navy,
         shadowOpacity: 0.18,
@@ -67,7 +77,7 @@ function CustomTabBar({ state, descriptors, navigation, insets }: BottomTabBarPr
               key={route.key}
               onPress={onPress}
               style={{
-                height: 40,
+                height: 38,
                 width: 48,
                 alignItems: "center",
                 justifyContent: "center",
@@ -75,7 +85,7 @@ function CustomTabBar({ state, descriptors, navigation, insets }: BottomTabBarPr
                 backgroundColor: isFocused ? "rgba(255,255,255,0.35)" : "transparent",
               }}
             >
-              <Ionicons color={isFocused ? themeColors.navy : "rgba(11,31,58,0.55)"} name={iconName} size={22} />
+              <Ionicons color={isFocused ? themeColors.text : "rgba(11,31,58,0.55)"} name={iconName} size={22} />
             </Pressable>
           );
         })}

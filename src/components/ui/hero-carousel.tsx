@@ -172,10 +172,10 @@ export function HeroCarousel() {
                       onPress={() => router.push("/inquiry")}
                       style={{
                         alignSelf: isLeft ? "flex-start" : "flex-end",
-                        backgroundColor: themeColors.error,
+                        backgroundColor: themeColors.primary,
                         paddingVertical: 10,
                         paddingHorizontal: 20,
-                        shadowColor: themeColors.error,
+                        shadowColor: themeColors.primary,
                         shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.35,
                         shadowRadius: 8,

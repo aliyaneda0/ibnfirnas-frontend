@@ -1,5 +1,8 @@
 export const translations = {
   en: {
+    "about.mission": "Our Mission",
+    "about.title": "About Us",
+    "about.vision": "Our Vision",
     "auth.backToLogin": "Back to login",
     "auth.continue": "Continue",
     "auth.countryCode": "Country code",
@@ -118,6 +121,9 @@ export const translations = {
     "services.title": "Services",
   },
   ar: {
+    "about.mission": "مهمتنا",
+    "about.title": "من نحن",
+    "about.vision": "رؤيتنا",
     "auth.backToLogin": "العودة لتسجيل الدخول",
     "auth.continue": "متابعة",
     "auth.countryCode": "رمز الدولة",
