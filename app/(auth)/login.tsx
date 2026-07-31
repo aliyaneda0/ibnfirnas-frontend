@@ -1,7 +1,7 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
 
 import { AppText } from "@/components/ui/app-text";
 import { BrandLogo } from "@/components/ui/brand-logo";
@@ -13,7 +13,7 @@ import { useAuth } from "@/features/auth/auth-provider";
 import { useLanguage } from "@/i18n/i18n-provider";
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
@@ -33,19 +33,45 @@ export default function LoginScreen() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await googleLogin();
+      router.replace("/(tabs)/Home");
+    } catch (error) {
+      Alert.alert("Google Login Failed", (error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: themeColors.primary }}>
+    <SafeAreaView
+      className="flex-1"
+      style={{ backgroundColor: themeColors.primary }}
+    >
       <LanguageToggle variant="dark" />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
         <View className="flex-1 px-6 pb-8 pt-36">
           <View className="items-center gap-2">
             <View className="mb-2">
               <BrandLogo size={92} />
             </View>
-            <AppText className="text-3xl pt-2" style={{ color: "#FFFFFF" }} variant="title">
+            <AppText
+              className="text-3xl pt-2"
+              style={{ color: "#FFFFFF" }}
+              variant="title"
+            >
               {t("auth.loginTitle")}
             </AppText>
-            <AppText className="px-4 text-center text-sm" style={{ color: "#CBD5E1" }}>
+            <AppText
+              className="px-4 text-center text-sm"
+              style={{ color: "#CBD5E1" }}
+            >
               {t("auth.loginSubtitle")}
             </AppText>
           </View>
@@ -84,6 +110,13 @@ export default function LoginScreen() {
               disabled={isSubmitting}
               label={t("auth.continue")}
               onPress={handleLogin}
+              variant="inverse"
+            />
+
+            <PrimaryButton
+              disabled={isSubmitting}
+              label="Continue with Google"
+              onPress={handleGoogleLogin}
               variant="inverse"
             />
 

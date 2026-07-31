@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Image, Linking, Modal, Pressable, View } from "react-native";
+import { Image, Linking, Modal, Pressable, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -11,10 +11,9 @@ import { AppText } from "./app-text";
 import { BrandLogo } from "./brand-logo";
 
 type MenuAction =
-  | { type: "route"; href: "/(tabs)/Profile" | "/(auth)/login" | "/inquiry" | "/inquiries" }
+  | { type: "route"; href: "/(tabs)/Profile" | "/(auth)/login" | "/inquiry" | "/inquiries" | "/about" }
   | { type: "language" }
-  | { type: "call" }
-  | { type: "about" };
+  | { type: "call" };
 
 type MenuItem = {
   icon: keyof typeof Feather.glyphMap;
@@ -27,7 +26,7 @@ const MENU_ITEMS: MenuItem[] = [
   { icon: "globe", labelKey: "menu.language", action: { type: "language" } },
   { icon: "help-circle", labelKey: "menu.myInquiries", action: { type: "route", href: "/inquiries" } },
   { icon: "phone", labelKey: "menu.contactSupport", action: { type: "call" } },
-  { icon: "info", labelKey: "menu.aboutUs", action: { type: "about" } },
+  { icon: "info", labelKey: "menu.aboutUs", action: { type: "route", href: "/about" } },
 ];
 
 export function AppHeader() {
@@ -50,10 +49,6 @@ export function AppHeader() {
       case "call":
         closeMenu();
         if (company?.phone) Linking.openURL(`tel:${company.phone}`);
-        return;
-      case "about":
-        closeMenu();
-        if (company) Alert.alert(company.name, company.description);
         return;
     }
   };

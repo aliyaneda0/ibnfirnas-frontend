@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/splash-icon.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.ibnfirnasfrontend"
+      "package": "com.ibnfirnas.mobile"
     },
     "web": {
       "bundler": "metro",

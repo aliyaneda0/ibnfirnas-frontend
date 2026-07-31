@@ -4,11 +4,12 @@ type RequestOptions = RequestInit & {
   token?: string | null;
 };
 
-export async function apiRequest<TResponse>(
+export async function apiRequest<T>(
   path: string,
-  options: RequestOptions = {},
-): Promise<TResponse> {
+  options: RequestOptions = {}
+): Promise<T> {
   const headers = new Headers(options.headers);
+
   headers.set("Accept", "application/json");
 
   if (options.body && !headers.has("Content-Type")) {
@@ -24,10 +25,11 @@ export async function apiRequest<TResponse>(
     headers,
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    throw new Error(body?.message ?? `API request failed with status ${response.status}`);
+    throw new Error(data.message || "Request failed");
   }
 
-  return response.json() as Promise<TResponse>;
+  return data;
 }
