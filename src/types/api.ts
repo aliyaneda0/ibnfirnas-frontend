@@ -10,6 +10,18 @@ export type ApiEnvelope<T> = {
   data: T;
 };
 
+// Shape of `data` for GET /api/products, /api/services, and /api/gallery
+// only — every other endpoint's `data` is either a bare array or a single
+// object (see the "featured", "/{id}", /api/categories, /api/company docs).
+export type PaginatedResponse<T> = {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+};
+
 export type StockStatus = "IN_STOCK" | "OUT_OF_STOCK" | "LOW_STOCK";
 
 export type Product = {
@@ -104,7 +116,7 @@ export type Company = {
   updatedAt: string;
 };
 
-export type InquiryStatus = "OPEN" | "CLOSED" | "PENDING";
+export type InquiryStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 export type InquiryPriority = "LOW" | "NORMAL" | "HIGH";
 
 export type InquiryRequest = {

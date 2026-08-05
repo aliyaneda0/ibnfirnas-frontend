@@ -1,33 +1,32 @@
 import { useMemo } from "react";
 
-import { mockInquiries } from "@/mocks/inquiries";
+import { getMyInquiries } from "@/api/endpoints/inquiries";
+import { useAuth } from "@/features/auth/auth-provider";
 import type { Inquiry } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiListQuery } from "./use-api-list-query";
+import { useApiQuery } from "./use-api-query";
 
-// No `userId` on `Inquiry` (matches the real DTO — ownership is enforced
-// server-side via the auth token, not a response field), so the mock layer
-// approximates "the signed-in user's inquiries" by matching submitter email.
-function normalizeEmail(email: string | null | undefined) {
-  return email?.trim().toLowerCase() || null;
-}
-
-export function useMyInquiries(email: string | null | undefined) {
-  const normalizedEmail = useMemo(() => normalizeEmail(email), [email]);
-  return useMockQuery<Inquiry[]>(() =>
-    normalizedEmail
-      ? mockInquiries.filter((inquiry) => inquiry.email.trim().toLowerCase() === normalizedEmail)
-      : [],
+// `email` is accepted for backward compatibility with existing call sites,
+// but ownership is enforced server-side via the auth token (GET /api/inquiries/my
+// already scopes to the caller), so it isn't used to filter here.
+export function useMyInquiries(_email?: string | null) {
+  const { token } = useAuth();
+  return useApiListQuery<Inquiry>(() =>
+    token ? getMyInquiries(token).then((res) => res.data) : Promise.resolve([]),
   );
 }
 
-export function useInquiry(id: string | number | undefined, email: string | null | undefined) {
+// No single-item "my inquiry by id" endpoint exists server-side, so this
+// fetches the caller's full list (same as useMyInquiries) and finds the
+// matching id client-side.
+export function useInquiry(id: string | number | undefined, _email?: string | null) {
+  const { token } = useAuth();
   const numericId = useMemo(() => (id !== undefined ? Number(id) : NaN), [id]);
-  const normalizedEmail = useMemo(() => normalizeEmail(email), [email]);
-  return useMockQuery<Inquiry | null>(() => {
-    const inquiry = mockInquiries.find((item) => item.id === numericId) ?? null;
-    if (!inquiry || !normalizedEmail || inquiry.email.trim().toLowerCase() !== normalizedEmail) {
-      return null;
-    }
-    return inquiry;
+
+  return useApiQuery<Inquiry | null>(() => {
+    if (!token || Number.isNaN(numericId)) return Promise.resolve(null);
+    return getMyInquiries(token).then(
+      (res) => res.data.find((inquiry) => inquiry.id === numericId) ?? null,
+    );
   });
 }

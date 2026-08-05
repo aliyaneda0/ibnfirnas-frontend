@@ -1,7 +1,7 @@
-import { mockCategories } from "@/mocks/categories";
+import { getCategories } from "@/api/endpoints/categories";
 import type { Category } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiListQuery } from "./use-api-list-query";
 
 export function useCategories() {
-  return useMockQuery<Category[]>(() => mockCategories);
+  return useApiListQuery<Category>(() => getCategories().then((res) => res.data));
 }

@@ -1,7 +1,7 @@
-import { mockCompany } from "@/mocks/company";
+import { getCompany } from "@/api/endpoints/company";
 import type { Company } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiQuery } from "./use-api-query";
 
 export function useCompany() {
-  return useMockQuery<Company>(() => mockCompany);
+  return useApiQuery<Company | null>(() => getCompany().then((res) => res.data));
 }

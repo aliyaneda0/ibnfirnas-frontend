@@ -1,20 +1,21 @@
 import { useMemo } from "react";
 
-import { mockProducts } from "@/mocks/products";
+import { getFeaturedProducts, getProduct, getProducts } from "@/api/endpoints/product";
 import type { Product } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiListQuery } from "./use-api-list-query";
+import { useApiQuery } from "./use-api-query";
 
 export function useProducts() {
-  return useMockQuery<Product[]>(() => mockProducts);
+  return useApiListQuery<Product>(() => getProducts().then((res) => res.data.content));
 }
 
 export function useFeaturedProducts() {
-  return useMockQuery<Product[]>(() => mockProducts.filter((p) => p.isFeatured));
+  return useApiListQuery<Product>(() => getFeaturedProducts().then((res) => res.data));
 }
 
 export function useProduct(id: string | number | undefined) {
   const numericId = useMemo(() => (id !== undefined ? Number(id) : NaN), [id]);
-  return useMockQuery<Product | null>(
-    () => mockProducts.find((p) => p.id === numericId) ?? null,
+  return useApiQuery<Product | null>(() =>
+    Number.isNaN(numericId) ? Promise.resolve(null) : getProduct(numericId).then((res) => res.data),
   );
 }
