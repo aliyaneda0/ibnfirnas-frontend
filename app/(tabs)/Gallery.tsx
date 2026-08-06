@@ -24,7 +24,7 @@ function GalleryTile({ item }: { item: GalleryItem }) {
     >
       <Image
         contentFit="cover"
-        source={{ uri: item.thumbnailUrl ?? item.mediaUrl }}
+        source={{ uri: item.thumbnailUrl || item.mediaUrl }}
         style={{ height: "100%", width: "100%" }}
       />
     </Pressable>

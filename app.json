@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "ibnfirnas-frontend",
+    "name": "Ibn Firnas",
     "slug": "ibnfirnas-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash-icon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "ibnfirnasfrontend",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -12,10 +12,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/splash-icon.png",
-        "backgroundImage": "./assets/images/splash-icon.png",
-        "monochromeImage": "./assets/images/splash-icon.png"
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/images/icon-adaptive-foreground.png",
+        "monochromeImage": "./assets/images/icon-adaptive-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.ibnfirnas.mobile"
@@ -23,7 +22,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
@@ -33,7 +32,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#F4F7FC"
         }
       ],
       "expo-font",
@@ -45,6 +44,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "47ff0002-cbc1-4616-aa8d-d9ebe504e6a7"
+      }
+    },
+    "owner": "aqeel54"
   }
 }

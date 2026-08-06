@@ -15,13 +15,18 @@ import type { Inquiry, InquiryStatus } from "@/types/api";
 
 const STATUS_COLOR: Record<InquiryStatus, string> = {
   OPEN: themeColors.primary,
-  PENDING: themeColors.accent,
+  IN_PROGRESS: themeColors.accent,
+  RESOLVED: themeColors.success,
   CLOSED: themeColors.textSecondary,
 };
 
-const STATUS_LABEL_KEY: Record<InquiryStatus, "inquiry.statusOpen" | "inquiry.statusPending" | "inquiry.statusClosed"> = {
+const STATUS_LABEL_KEY: Record<
+  InquiryStatus,
+  "inquiry.statusOpen" | "inquiry.statusInProgress" | "inquiry.statusResolved" | "inquiry.statusClosed"
+> = {
   OPEN: "inquiry.statusOpen",
-  PENDING: "inquiry.statusPending",
+  IN_PROGRESS: "inquiry.statusInProgress",
+  RESOLVED: "inquiry.statusResolved",
   CLOSED: "inquiry.statusClosed",
 };
 

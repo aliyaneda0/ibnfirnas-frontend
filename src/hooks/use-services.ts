@@ -1,20 +1,21 @@
 import { useMemo } from "react";
 
-import { mockServices } from "@/mocks/services";
+import { getFeaturedServices, getService, getServices } from "@/api/endpoints/services";
 import type { Service } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiListQuery } from "./use-api-list-query";
+import { useApiQuery } from "./use-api-query";
 
 export function useServices() {
-  return useMockQuery<Service[]>(() => mockServices);
+  return useApiListQuery<Service>(() => getServices().then((res) => res.data.content));
 }
 
 export function useFeaturedServices() {
-  return useMockQuery<Service[]>(() => mockServices.filter((s) => s.isFeatured));
+  return useApiListQuery<Service>(() => getFeaturedServices().then((res) => res.data));
 }
 
 export function useService(id: string | number | undefined) {
   const numericId = useMemo(() => (id !== undefined ? Number(id) : NaN), [id]);
-  return useMockQuery<Service | null>(
-    () => mockServices.find((s) => s.id === numericId) ?? null,
+  return useApiQuery<Service | null>(() =>
+    Number.isNaN(numericId) ? Promise.resolve(null) : getService(numericId).then((res) => res.data),
   );
 }

@@ -1,7 +1,7 @@
-import { mockGallery } from "@/mocks/gallery";
+import { getGallery } from "@/api/endpoints/gallery";
 import type { GalleryItem } from "@/types/api";
-import { useMockQuery } from "./use-mock-query";
+import { useApiListQuery } from "./use-api-list-query";
 
 export function useGallery() {
-  return useMockQuery<GalleryItem[]>(() => mockGallery);
+  return useApiListQuery<GalleryItem>(() => getGallery().then((res) => res.data.content));
 }
