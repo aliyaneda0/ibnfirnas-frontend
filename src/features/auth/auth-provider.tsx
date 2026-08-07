@@ -10,12 +10,8 @@ const USER_KEY = "auth-user";
 const GOOGLE_WEB_CLIENT_ID =
   "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com";
 
-const GOOGLE_ANDROID_CLIENT_ID =
-  "282521229458-lujh1akh0qvnsugtahadjc4hc58otet9.apps.googleusercontent.com";
-
 GoogleSignin.configure({
-  webClientId:
-    "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com",
+  webClientId: GOOGLE_WEB_CLIENT_ID,
   offlineAccess: true,
 });
 

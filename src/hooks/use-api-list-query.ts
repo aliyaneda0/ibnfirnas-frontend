@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { MockQueryResult } from "./use-mock-query";
+import type { QueryResult } from "./query-result";
 
-// Same result shape as `useMockQuery` so screens don't change when a hook
-// swaps from mock data to a real fetch — only used for the three endpoints
-// that return a paginated envelope (`{ data: { content: [...] } }`):
-// GET /api/products, /api/services, /api/gallery.
-export function useApiListQuery<T>(fetcher: () => Promise<T[]>): MockQueryResult<T[]> {
+// Only used for the three endpoints that return a paginated envelope
+// (`{ data: { content: [...] } }`): GET /api/products, /api/services,
+// /api/gallery.
+export function useApiListQuery<T>(fetcher: () => Promise<T[]>): QueryResult<T[]> {
   const [data, setData] = useState<T[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

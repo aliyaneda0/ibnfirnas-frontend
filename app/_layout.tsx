@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as Sentry from "@sentry/react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import {
   IBMPlexSans_600SemiBold,
@@ -15,6 +16,11 @@ import { LanguageProvider } from "@/i18n/i18n-provider";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  tracesSampleRate: 1.0,
+});
 
 function RootLayoutContent() {
   const { isLoading: authLoading } = useAuth();
@@ -44,7 +50,7 @@ function RootLayoutContent() {
   return <Slot />;
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -57,3 +63,5 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(RootLayout);
