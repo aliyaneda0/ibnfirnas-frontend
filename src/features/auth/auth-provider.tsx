@@ -70,8 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const bootstrap = async () => {
     try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
-      await SecureStore.deleteItemAsync(USER_KEY);
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
 
       if (!storedToken) {
@@ -150,17 +148,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       );
 
-      console.log("Google Auth Response:", auth);
-
       const jwt = auth.data.token;
-      console.log("JWT:", jwt);
 
       const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
         method: "GET",
         token: jwt,
       });
-
-      console.log("Profile:", profile);
 
       await persistSession(jwt, profile.data);
     } catch (error: any) {
