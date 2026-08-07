@@ -1,6 +1,6 @@
 // components/ui/animated-splash.tsx
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, View, Platform } from 'react-native';
+import { Animated, Easing, StyleSheet, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { themeColors, themeFontFamily } from '@/config/design-tokens';
 import { BrandLogo } from './brand-logo';
@@ -10,7 +10,7 @@ const useNativeDriver = Platform.OS !== 'web';
 // How long to hold on the fully-settled splash before handing off to the
 // real screen behind it, so the entrance animation never gets cut short by
 // app-ready resolving instantly.
-const HOLD_BEFORE_EXIT_MS = 500;
+const HOLD_BEFORE_EXIT_MS = 2500;
 
 const WORDMARK = 'IBN FIRNAS';
 const TYPE_CHAR_MS = 70;
@@ -22,10 +22,12 @@ interface AnimatedSplashProps {
 }
 
 export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSplashProps) {
-  // Logo entrance values — pops in from 0 with a springy overshoot, fading
-  // in as it settles, rather than a plain static fade.
-  const logoScale = useRef(new Animated.Value(0)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
+  // Logo entrance values — start mostly-there (0.9) rather than from
+  // nothing, so the logo is already almost visible at the exact moment the
+  // native splash hands off to this component; it just settles the rest of
+  // the way in rather than visibly popping from invisible.
+  const logoScale = useRef(new Animated.Value(0.9)).current;
+  const logoOpacity = useRef(new Animated.Value(0.9)).current;
 
   // Wordmark typewriter — characters are revealed one at a time (in teal,
   // readable against the now-light splash background), then wordmarkColor
@@ -33,9 +35,6 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
   const [displayedText, setDisplayedText] = useState('');
   const wordmarkColor = useRef(new Animated.Value(0)).current;
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Progress dot pulse
-  const dotOpacity = useRef(new Animated.Value(0.3)).current;
 
   // Overlay exit values
   const overlayOpacity = useRef(new Animated.Value(1)).current;
@@ -81,27 +80,6 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
     ]).start(() => {
       typeNextChar(0);
     });
-
-    // Looping pulse for the "loading" dot. Phase 1 has no global data
-    // warm-up to wait on (each screen's mock hook fetches on its own mount);
-    // this dot just communicates "getting ready" while fonts load and the
-    // auth session bootstraps (see isAppReady in app/_layout.tsx).
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(dotOpacity, {
-          toValue: 1,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(dotOpacity, {
-          toValue: 0.3,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
 
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
@@ -155,7 +133,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
           transform: [{ scale: logoScale }],
         }}
       >
-        <BrandLogo card={false} size={100} />
+        <BrandLogo card={false} size={105} />
       </Animated.View>
 
       <Animated.Text
@@ -171,10 +149,6 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
       >
         {displayedText}
       </Animated.Text>
-
-      <View className="mt-6 flex-row items-center justify-center">
-        <Animated.View style={[styles.dot, { opacity: dotOpacity }]} />
-      </View>
     </Animated.View>
   );
 }
@@ -192,11 +166,5 @@ const styles = StyleSheet.create({
     fontSize: 28,
     letterSpacing: 0.5,
     textAlign: 'center',
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#2468AC',
   },
 });

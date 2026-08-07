@@ -26,12 +26,11 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withSplashScreenIconBehavior.js",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          "image": "./assets/images/splash-blank.png",
           "backgroundColor": "#F4F7FC"
         }
       ],
