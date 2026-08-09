@@ -47,3 +47,4 @@ app-example
 
 # docs
 *.md
+.env.local

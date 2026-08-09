@@ -10,12 +10,8 @@ const USER_KEY = "auth-user";
 const GOOGLE_WEB_CLIENT_ID =
   "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com";
 
-const GOOGLE_ANDROID_CLIENT_ID =
-  "282521229458-lujh1akh0qvnsugtahadjc4hc58otet9.apps.googleusercontent.com";
-
 GoogleSignin.configure({
-  webClientId:
-    "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com",
+  webClientId: GOOGLE_WEB_CLIENT_ID,
   offlineAccess: true,
 });
 
@@ -70,8 +66,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const bootstrap = async () => {
     try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
-      await SecureStore.deleteItemAsync(USER_KEY);
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
 
       if (!storedToken) {
@@ -150,17 +144,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       );
 
-      console.log("Google Auth Response:", auth);
-
       const jwt = auth.data.token;
-      console.log("JWT:", jwt);
 
       const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
         method: "GET",
         token: jwt,
       });
-
-      console.log("Profile:", profile);
 
       await persistSession(jwt, profile.data);
     } catch (error: any) {

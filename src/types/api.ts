@@ -1,8 +1,6 @@
 // TypeScript contracts mirroring the backend DTOs exactly (field names,
 // types, nullability) per the v1 frontend integration spec, verified live
-// against `developer-2` on 2026-07-10. Phase 1 mocks (`src/mocks/`) and
-// hooks (`src/hooks/`) are typed against these so a future switch to real
-// `fetch` calls is a compile-time-checked drop-in, not a rewrite.
+// against `developer-2` on 2026-07-10.
 
 export type ApiEnvelope<T> = {
   success: boolean;

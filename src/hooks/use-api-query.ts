@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { MockQueryResult } from "./use-mock-query";
+import type { QueryResult } from "./query-result";
 
-// Single-object counterpart to `useApiListQuery` — same result shape as
-// `useMockQuery` so screens don't change when a hook swaps from mock data
-// to a real fetch. Used for endpoints that return one object (or null),
-// not a list: GET /api/products/{id}, /api/services/{id}, /api/company.
-export function useApiQuery<T>(fetcher: () => Promise<T>): MockQueryResult<T> {
+// Single-object counterpart to `useApiListQuery`. Used for endpoints that
+// return one object (or null), not a list: GET /api/products/{id},
+// /api/services/{id}, /api/company.
+export function useApiQuery<T>(fetcher: () => Promise<T>): QueryResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
