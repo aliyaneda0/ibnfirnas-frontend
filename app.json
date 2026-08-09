@@ -39,7 +39,14 @@
       "expo-image",
       "expo-status-bar",
       "expo-web-browser",
-      "@sentry/react-native"
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "ibnfirnas-mobile",
+          "organization": "aliya-neda"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
