@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Pressable, View } from "react-native";
+import { Alert, Image, Pressable, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -89,6 +89,8 @@ export default function ProfileScreen() {
         avatarUrl: avatarUrlInput.trim() || undefined,
       });
       setIsEditing(false);
+    } catch (error) {
+      Alert.alert(t("profile.title"), (error as Error).message);
     } finally {
       setIsSaving(false);
     }
@@ -168,13 +170,13 @@ export default function ProfileScreen() {
                 placeholder={t("profile.phone")}
                 value={phoneInput}
               />
-              <TextField
+              {/* <TextField
                 autoCapitalize="none"
                 leftIcon="image"
                 onChangeText={setAvatarUrlInput}
                 placeholder={t("profile.avatarUrl")}
                 value={avatarUrlInput}
-              />
+              /> */}
               <View className="flex-row gap-3">
                 <Pressable
                   accessibilityRole="button"

@@ -96,13 +96,7 @@ export default function LoginScreen() {
               value={password}
               variant="dark"
             />
-            <AppText
-              className="self-end text-sm underline"
-              onPress={() => router.push("/(auth)/forgot-password")}
-              style={{ color: "#CBD5E1" }}
-            >
-              {t("auth.forgotPassword")}
-            </AppText>
+           
           </View>
 
           <View className="mt-6 gap-6">
