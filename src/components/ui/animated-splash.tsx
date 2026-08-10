@@ -26,19 +26,19 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
   // nothing, so the logo is already almost visible at the exact moment the
   // native splash hands off to this component; it just settles the rest of
   // the way in rather than visibly popping from invisible.
-  const logoScale = useRef(new Animated.Value(0.9)).current;
-  const logoOpacity = useRef(new Animated.Value(0.9)).current;
+  const [logoScale] = useState(() => new Animated.Value(0.9));
+  const [logoOpacity] = useState(() => new Animated.Value(0.9));
 
   // Wordmark typewriter — characters are revealed one at a time (in teal,
   // readable against the now-light splash background), then wordmarkColor
   // animates the fill from teal to brand blue once the full name is typed out.
   const [displayedText, setDisplayedText] = useState('');
-  const wordmarkColor = useRef(new Animated.Value(0)).current;
+  const [wordmarkColor] = useState(() => new Animated.Value(0));
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Overlay exit values
-  const overlayOpacity = useRef(new Animated.Value(1)).current;
-  const overlayScale = useRef(new Animated.Value(1)).current;
+  const [overlayOpacity] = useState(() => new Animated.Value(1));
+  const [overlayScale] = useState(() => new Animated.Value(1));
 
   const [readyToExit, setReadyToExit] = useState(false);
 
@@ -84,7 +84,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
-  }, []);
+  }, [logoOpacity, logoScale, wordmarkColor]);
 
   // Exit animation — runs once the app is ready AND the entrance has held
   useEffect(() => {
@@ -106,7 +106,7 @@ export function AnimatedSplash({ onAnimationComplete, isAppReady }: AnimatedSpla
         onAnimationComplete();
       });
     }
-  }, [isAppReady, readyToExit]);
+  }, [isAppReady, onAnimationComplete, overlayOpacity, overlayScale, readyToExit]);
 
   return (
     <Animated.View

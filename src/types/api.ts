@@ -25,7 +25,7 @@ export type StockStatus = "IN_STOCK" | "OUT_OF_STOCK" | "LOW_STOCK";
 export type Product = {
   id: number;
   name: string;
-  slug: string;
+  slug: string | null;
   description: string;
   shortDescription: string;
   price: number;
@@ -34,11 +34,12 @@ export type Product = {
   stockQuantity: number;
   stockStatus: StockStatus;
   isFeatured: boolean;
-  categoryId: number;
-  categoryName: string;
+  categoryId: number | null;
+  categoryName: string | null;
   isActive: boolean;
   averageRating: number;
   totalReviews: number;
+  specifications: Record<string, string> | null;
   // ⚠️ The API returns a single hero image only — no images[] array despite
   // the backend entity having a ProductImage[] relation. Do not design a
   // multi-image carousel/gallery for Product Detail.

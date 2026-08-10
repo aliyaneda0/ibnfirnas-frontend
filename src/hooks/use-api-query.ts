@@ -33,7 +33,10 @@ export function useApiQuery<T>(fetcher: () => Promise<T>): QueryResult<T> {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version]);
 
-  useEffect(() => load(), [load]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    return load();
+  }, [load]);
 
   const refetch = useCallback(() => setVersion((v) => v + 1), []);
 

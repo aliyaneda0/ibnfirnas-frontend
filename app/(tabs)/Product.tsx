@@ -1,20 +1,23 @@
+import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { router } from "expo-router";
 
 import { AppText } from "@/components/ui/app-text";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonCard } from "@/components/ui/skeleton";
-import { ErrorState, EmptyState } from "@/components/ui/state-view";
+import { EmptyState, ErrorState } from "@/components/ui/state-view";
 import { themeColors } from "@/config/design-tokens";
 import { useCategories } from "@/hooks/use-categories";
 import { useProducts } from "@/hooks/use-products";
 import { useLanguage } from "@/i18n/i18n-provider";
 import type { Product } from "@/types/api";
 
-const STOCK_LABEL_KEY: Record<Product["stockStatus"], "products.inStock" | "products.lowStock" | "products.outOfStock"> = {
+const STOCK_LABEL_KEY: Record<
+  Product["stockStatus"],
+  "products.inStock" | "products.lowStock" | "products.outOfStock"
+> = {
   IN_STOCK: "products.inStock",
   LOW_STOCK: "products.lowStock",
   OUT_OF_STOCK: "products.outOfStock",
@@ -53,7 +56,10 @@ function ProductCard({ product }: { product: Product }) {
             </AppText>
           ) : null}
         </View>
-        <AppText className="text-xs" style={{ color: STOCK_COLOR[product.stockStatus] }}>
+        <AppText
+          className="text-xs"
+          style={{ color: STOCK_COLOR[product.stockStatus] }}
+        >
           {t(STOCK_LABEL_KEY[product.stockStatus])}
         </AppText>
       </View>
@@ -70,7 +76,9 @@ export default function ProductsScreen() {
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (activeCategoryId === null) return products;
-    return products.filter((p) => p.categoryId === activeCategoryId);
+    return products.filter(
+      (p) => p.categoryId !== null && p.categoryId === activeCategoryId,
+    );
   }, [products, activeCategoryId]);
 
   return (
@@ -87,7 +95,11 @@ export default function ProductsScreen() {
               <SkeletonCard />
             </View>
           ) : error ? (
-            <ErrorState message={error.message} onRetry={refetch} retryLabel={t("products.retry")} />
+            <ErrorState
+              message={error.message}
+              onRetry={refetch}
+              retryLabel={t("products.retry")}
+            />
           ) : (
             <EmptyState icon="box" message={t("products.empty")} />
           )
@@ -105,11 +117,24 @@ export default function ProductsScreen() {
                   className="mr-2 rounded-full border px-4 py-2"
                   onPress={() => setActiveCategoryId(null)}
                   style={{
-                    backgroundColor: activeCategoryId === null ? themeColors.primary : themeColors.card,
-                    borderColor: activeCategoryId === null ? themeColors.primary : themeColors.border,
+                    backgroundColor:
+                      activeCategoryId === null
+                        ? themeColors.primary
+                        : themeColors.card,
+                    borderColor:
+                      activeCategoryId === null
+                        ? themeColors.primary
+                        : themeColors.border,
                   }}
                 >
-                  <AppText style={{ color: activeCategoryId === null ? themeColors.card : themeColors.text }}>
+                  <AppText
+                    style={{
+                      color:
+                        activeCategoryId === null
+                          ? themeColors.card
+                          : themeColors.text,
+                    }}
+                  >
                     {t("products.filterAll")}
                   </AppText>
                 </Pressable>
@@ -119,11 +144,24 @@ export default function ProductsScreen() {
                   className="mr-2 rounded-full border px-4 py-2"
                   onPress={() => setActiveCategoryId(item.id)}
                   style={{
-                    backgroundColor: activeCategoryId === item.id ? themeColors.primary : themeColors.card,
-                    borderColor: activeCategoryId === item.id ? themeColors.primary : themeColors.border,
+                    backgroundColor:
+                      activeCategoryId === item.id
+                        ? themeColors.primary
+                        : themeColors.card,
+                    borderColor:
+                      activeCategoryId === item.id
+                        ? themeColors.primary
+                        : themeColors.border,
                   }}
                 >
-                  <AppText style={{ color: activeCategoryId === item.id ? themeColors.card : themeColors.text }}>
+                  <AppText
+                    style={{
+                      color:
+                        activeCategoryId === item.id
+                          ? themeColors.card
+                          : themeColors.text,
+                    }}
+                  >
                     {item.name}
                   </AppText>
                 </Pressable>
@@ -132,7 +170,9 @@ export default function ProductsScreen() {
             />
           </View>
         }
-        refreshControl={<RefreshControl onRefresh={refetch} refreshing={isLoading} />}
+        refreshControl={
+          <RefreshControl onRefresh={refetch} refreshing={isLoading} />
+        }
         renderItem={({ item }) => <ProductCard product={item} />}
       />
     </SafeAreaView>

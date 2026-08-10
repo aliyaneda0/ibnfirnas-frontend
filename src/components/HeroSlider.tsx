@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   StyleSheet, View, Text, ImageBackground,
-  Dimensions, TouchableOpacity, FlatList, Animated
+  Dimensions, TouchableOpacity, FlatList
 } from 'react-native'
 import { router } from 'expo-router'
 

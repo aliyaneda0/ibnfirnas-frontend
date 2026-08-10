@@ -15,8 +15,6 @@ const TAB_ICONS: Record<string, { active: IconName; inactive: IconName }> = {
   Profile: { active: "person", inactive: "person-outline" },
 };
 
-const BAR_TINT = "#39ADAE";
-
 // Derived from `Tabs`' own `tabBar` prop rather than imported from
 // `@react-navigation/bottom-tabs` directly — expo-router bundles its own
 // (structurally identical but nominally distinct) copy of this type, and
