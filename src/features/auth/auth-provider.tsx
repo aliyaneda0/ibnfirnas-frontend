@@ -2,13 +2,12 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "expo-secure-store";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import { GOOGLE_WEB_CLIENT_ID } from "@/config/env";
 import { apiRequest } from "@/lib/api";
-import type { ApiEnvelope, AuthSession, Profile } from "@/types/api";
+import type { ApiEnvelope, AuthSession, Profile, UpdateProfileRequest } from "@/types/api";
 
 const TOKEN_KEY = "auth-token";
 const USER_KEY = "auth-user";
-const GOOGLE_WEB_CLIENT_ID =
-  "282521229458-p7dk39mknn8dsc628bdc0q4qt6ba07bf.apps.googleusercontent.com";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
@@ -24,9 +23,7 @@ type RegisterInput = {
   phone?: string;
 };
 
-type ProfileUpdateInput = Partial<
-  Pick<AuthUser, "fullName" | "phone" | "avatarUrl">
->;
+type ProfileUpdateInput = Pick<UpdateProfileRequest, "fullName" | "phone" | "avatarUrl">;
 
 type AuthContextType = {
   user: AuthUser | null;
@@ -60,10 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    bootstrap();
-  }, []);
-
   const bootstrap = async () => {
     try {
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
@@ -73,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const response = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+      const response = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
         method: "GET",
         token: storedToken,
       });
@@ -82,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(response.data);
 
       await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.data));
-    } catch (error) {
+    } catch {
       console.log("Session expired");
 
       await SecureStore.deleteItemAsync(TOKEN_KEY);
@@ -94,6 +87,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    bootstrap();
+  }, []);
 
   const persistSession = async (jwt: string, profile: AuthUser) => {
     await SecureStore.setItemAsync(TOKEN_KEY, jwt);
@@ -114,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const jwt = auth.data.token;
 
-    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
       method: "GET",
       token: jwt,
     });
@@ -146,7 +144,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const jwt = auth.data.token;
 
-      const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+      const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
         method: "GET",
         token: jwt,
       });
@@ -171,7 +169,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const jwt = auth.data.token;
 
-    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/auth/me", {
+    const profile = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
       method: "GET",
       token: jwt,
     });
@@ -182,19 +180,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const updateProfile = async (updates: ProfileUpdateInput) => {
     if (!user || !token) return;
 
-    const updated = {
-      ...user,
-      ...updates,
-    };
+    const response = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
+      method: "PUT",
+      token,
+      body: JSON.stringify(updates),
+    });
 
-    await persistSession(token, updated);
+    await persistSession(token, response.data);
   };
 
   const changePassword = async (
-    _currentPassword: string,
-    _newPassword: string,
+    currentPassword: string,
+    newPassword: string,
   ) => {
-    throw new Error("Not implemented yet");
+    if (!user || !token) return;
+
+    const response = await apiRequest<ApiEnvelope<AuthUser>>("/api/profile", {
+      method: "PUT",
+      token,
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+      }),
+    });
+
+    await persistSession(token, response.data);
   };
 
   const forgotPassword = async (_email: string) => {};

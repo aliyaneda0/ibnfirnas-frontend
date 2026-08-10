@@ -15,7 +15,7 @@ import type { GalleryItem } from "@/types/api";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-function ZoomableImage({ item }: { item: GalleryItem }) {
+ function ZoomableImage({ item }: { item: GalleryItem }) {
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
