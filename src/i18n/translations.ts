@@ -7,7 +7,7 @@ export const translations = {
     "auth.continue": "Continue",
     "auth.countryCode": "Country code",
     "auth.email": "Email address",
-    
+
     "auth.haveAccount": "Already have an account?",
     "auth.login": "Login",
     "auth.loginSubtitle": "Use your email address to continue.",
@@ -18,30 +18,35 @@ export const translations = {
     "auth.newUser": "New user?",
     "auth.password": "Password",
     "auth.phone": "Phone number",
-    
+
     "auth.resetToken": "Reset code",
     "auth.signup": "Sign up",
     "auth.signupSubtitle": "Enter your details to create a new account.",
     "auth.signupTitle": "Create account",
-    "contact.empty": "Company contact details and inquiry form will be added here.",
+    "contact.empty":
+      "Company contact details and inquiry form will be added here.",
     "contact.title": "Contact",
     "gallery.empty": "Company, project, and product images will be shown here.",
     "gallery.title": "Gallery",
     "hero.slide2Title": "SMART INDUSTRIAL",
     "hero.slide2Highlight": "AUTOMATION SOLUTIONS",
-    "hero.slide2Subtitle": "Optimize your production with intelligent automation — from motion control and servo systems to complete factory integration.",
+    "hero.slide2Subtitle":
+      "Optimize your production with intelligent automation — from motion control and servo systems to complete factory integration.",
     "hero.slide2Button": "DISCOVER MORE",
     "hero.slide3Title": "COMPLETE AUTOMATION",
     "hero.slide3Highlight": "UNDER ONE ROOF",
-    "hero.slide3Subtitle": "From PLCs to servo systems, we design automation solutions that maximize performance and minimize downtime.",
+    "hero.slide3Subtitle":
+      "From PLCs to servo systems, we design automation solutions that maximize performance and minimize downtime.",
     "hero.slide3Button": "DISCOVER MORE",
     "hero.slide4Title": "EMPOWERING QATAR WITH",
     "hero.slide4Highlight": "SMART AUTOMATION",
-    "hero.slide4Subtitle": "Reliable automation, control, and repair solutions for every industry — keeping your operations efficient and future-ready.",
+    "hero.slide4Subtitle":
+      "Reliable automation, control, and repair solutions for every industry — keeping your operations efficient and future-ready.",
     "hero.slide4Button": "EXPLORE OUR SERVICES",
     "hero.slide1Title": "INNOVATIVE AUTOMATIC",
     "hero.slide1Highlight": "DOOR SOLUTIONS",
-    "hero.slide1Subtitle": "Smart automation with our high-performance sectional, rolling, and swing door systems — for durability, safety, and convenience.",
+    "hero.slide1Subtitle":
+      "Smart automation with our high-performance sectional, rolling, and swing door systems — for durability, safety, and convenience.",
     "hero.slide1Button": "LEARN MORE",
     "home.companyEmpty": "Company information isn't available right now.",
     "home.contactUs": "Contact us",
@@ -50,11 +55,13 @@ export const translations = {
     "home.featuredServices": "Featured services",
     "home.featuredServicesEmpty": "No featured services right now.",
     "home.quickAccess": "Quick access",
-    "home.subtitle": "Explore IBN Firnas services, products, gallery, and inquiries.",
+    "home.subtitle":
+      "Explore IBN Firnas services, products, gallery, and inquiries.",
     "home.tagline": "Trading & Contracting",
     "home.title": "IBN Firnas",
     "home.welcome": "Welcome back",
-    "home.whatsappMessage": "Hi, I'd like to know more about IBN Firnas products and services.",
+    "home.whatsappMessage":
+      "Hi, I'd like to know more about IBN Firnas products and services.",
     "inquiry.backHome": "Back to home",
     "inquiry.detailTitle": "Inquiry details",
     "inquiry.email": "Email address",
@@ -74,7 +81,8 @@ export const translations = {
     "inquiry.submit": "Submit inquiry",
     "inquiry.submittedOn": "Submitted",
     "inquiry.subtitle": "Tell us what you need and we'll get back to you.",
-    "inquiry.successMessage": "Thanks for reaching out — our team will contact you shortly.",
+    "inquiry.successMessage":
+      "Thanks for reaching out — our team will contact you shortly.",
     "inquiry.successTitle": "Inquiry submitted",
     "inquiry.title": "Send an inquiry",
     "language.change": "Change language",
@@ -102,7 +110,8 @@ export const translations = {
     "profile.currentPassword": "Current password",
     "profile.edit": "Edit",
     "profile.email": "Email address",
-    "profile.loggedOutSubtitle": "Log in or create an account to manage your profile and inquiries.",
+    "profile.loggedOutSubtitle":
+      "Log in or create an account to manage your profile and inquiries.",
     "profile.loggedOutTitle": "You're not logged in",
     "profile.name": "Full name",
     "profile.phone": "Phone number",
@@ -138,7 +147,7 @@ export const translations = {
     "auth.newUser": "مستخدم جديد؟",
     "auth.password": "كلمة المرور",
     "auth.phone": "رقم الهاتف",
-   
+
     "auth.resetToken": "رمز إعادة التعيين",
     "auth.signup": "إنشاء حساب",
     "auth.signupSubtitle": "أدخل بياناتك لإنشاء حساب جديد.",
@@ -149,19 +158,23 @@ export const translations = {
     "gallery.title": "المعرض",
     "hero.slide1Title": "أتمتة صناعية",
     "hero.slide1Highlight": "ذكية ومتكاملة",
-    "hero.slide1Subtitle": "حسّن إنتاجك بأتمتة ذكية — من التحكم في الحركة وأنظمة السيرفو إلى التكامل الكامل للمصنع.",
+    "hero.slide1Subtitle":
+      "حسّن إنتاجك بأتمتة ذكية — من التحكم في الحركة وأنظمة السيرفو إلى التكامل الكامل للمصنع.",
     "hero.slide1Button": "اكتشف المزيد",
     "hero.slide2Title": "أتمتة متكاملة",
     "hero.slide2Highlight": "تحت سقف واحد",
-    "hero.slide2Subtitle": "من وحدات التحكم المنطقي القابلة للبرمجة إلى أنظمة السيرفو، نصمم حلول أتمتة تعزز الأداء وتقلل التوقف.",
+    "hero.slide2Subtitle":
+      "من وحدات التحكم المنطقي القابلة للبرمجة إلى أنظمة السيرفو، نصمم حلول أتمتة تعزز الأداء وتقلل التوقف.",
     "hero.slide2Button": "اكتشف المزيد",
     "hero.slide3Title": "نمكّن قطر",
     "hero.slide3Highlight": "بالأتمتة الذكية",
-    "hero.slide3Subtitle": "حلول أتمتة وتحكم وصيانة موثوقة لكل قطاع — لإبقاء عملياتك فعالة وجاهزة للمستقبل.",
+    "hero.slide3Subtitle":
+      "حلول أتمتة وتحكم وصيانة موثوقة لكل قطاع — لإبقاء عملياتك فعالة وجاهزة للمستقبل.",
     "hero.slide3Button": "استكشف خدماتنا",
     "hero.slide4Title": "حلول أبواب",
     "hero.slide4Highlight": "أوتوماتيكية مبتكرة",
-    "hero.slide4Subtitle": "أتمتة ذكية لأنظمة الأبواب القطاعية والرول والسوينغ عالية الأداء — للمتانة والسلامة والراحة.",
+    "hero.slide4Subtitle":
+      "أتمتة ذكية لأنظمة الأبواب القطاعية والرول والسوينغ عالية الأداء — للمتانة والسلامة والراحة.",
     "hero.slide4Button": "اعرف المزيد",
     "home.companyEmpty": "معلومات الشركة غير متاحة حاليًا.",
     "home.contactUs": "تواصل معنا",
@@ -174,7 +187,8 @@ export const translations = {
     "home.tagline": "التجارة والمقاولات",
     "home.title": "ابن فرناس",
     "home.welcome": "مرحبًا بعودتك",
-    "home.whatsappMessage": "مرحبًا، أرغب في معرفة المزيد عن منتجات وخدمات ابن فرناس.",
+    "home.whatsappMessage":
+      "مرحبًا، أرغب في معرفة المزيد عن منتجات وخدمات ابن فرناس.",
     "inquiry.backHome": "العودة إلى الرئيسية",
     "inquiry.detailTitle": "تفاصيل الاستفسار",
     "inquiry.email": "البريد الإلكتروني",
@@ -184,7 +198,8 @@ export const translations = {
     "inquiry.newInquiry": "استفسار جديد",
     "inquiry.notFound": "تعذر العثور على هذا الاستفسار.",
     "inquiry.phone": "رقم الهاتف (اختياري)",
-    "inquiry.requiredError": "الاسم والبريد الإلكتروني والموضوع والرسالة مطلوبة.",
+    "inquiry.requiredError":
+      "الاسم والبريد الإلكتروني والموضوع والرسالة مطلوبة.",
     "inquiry.statusClosed": "مغلق",
     "inquiry.statusInProgress": "قيد المعالجة",
     "inquiry.statusOpen": "مفتوح",
@@ -210,6 +225,9 @@ export const translations = {
     "products.featured": "مميز",
     "products.filterAll": "الكل",
     "products.inquire": "استفسر عن هذا المنتج",
+    "products.sku": "SKU",
+    "products.stockQuantity": "الكمية",
+    "products.specifications": "المواصفات",
     "products.inStock": "متوفر",
     "products.lowStock": "كمية محدودة",
     "products.notFound": "تعذر العثور على هذا المنتج.",
@@ -222,7 +240,8 @@ export const translations = {
     "profile.currentPassword": "كلمة المرور الحالية",
     "profile.edit": "تعديل",
     "profile.email": "البريد الإلكتروني",
-    "profile.loggedOutSubtitle": "سجّل الدخول أو أنشئ حسابًا لإدارة ملفك الشخصي واستفساراتك.",
+    "profile.loggedOutSubtitle":
+      "سجّل الدخول أو أنشئ حسابًا لإدارة ملفك الشخصي واستفساراتك.",
     "profile.loggedOutTitle": "لم تسجّل الدخول",
     "profile.name": "الاسم الكامل",
     "profile.phone": "رقم الهاتف",

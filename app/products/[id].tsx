@@ -1,9 +1,8 @@
-import { Pressable, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { Pressable, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
 
 import { AppText } from "@/components/ui/app-text";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +34,9 @@ export default function ProductDetailsScreen() {
         <AppText variant="title">{t("products.detailTitle")}</AppText>
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 120, gap: 16 }}>
+      <ScrollView
+        contentContainerStyle={{ padding: 24, paddingBottom: 120, gap: 16 }}
+      >
         {isLoading ? (
           <View className="gap-3">
             <Skeleton borderRadius={20} height={220} />
@@ -43,7 +44,11 @@ export default function ProductDetailsScreen() {
             <Skeleton height={16} width="40%" />
           </View>
         ) : error ? (
-          <ErrorState message={error.message} onRetry={refetch} retryLabel={t("products.retry")} />
+          <ErrorState
+            message={error.message}
+            onRetry={refetch}
+            retryLabel={t("products.retry")}
+          />
         ) : !product ? (
           <EmptyState icon="box" message={t("products.notFound")} />
         ) : (
@@ -54,7 +59,9 @@ export default function ProductDetailsScreen() {
               style={{ height: 220, width: "100%", borderRadius: 20 }}
             />
 
-            {product.isFeatured ? <Badge label={t("products.featured")} /> : null}
+            {product.isFeatured ? (
+              <Badge label={t("products.featured")} />
+            ) : null}
 
             <AppText variant="title">{product.name}</AppText>
 
@@ -88,6 +95,62 @@ export default function ProductDetailsScreen() {
               )}
             </AppText>
 
+            <View className="rounded-2xl border border-border bg-card px-4 py-3">
+              <View className="flex-row justify-between gap-4">
+                <View className="flex-1 space-y-3">
+                  <AppText
+                    style={{ color: themeColors.textSecondary }}
+                    className="text-sm font-semibold"
+                  >
+                    SKU
+                  </AppText>
+                  <AppText
+                    style={{ color: themeColors.textSecondary }}
+                    className="text-sm font-semibold"
+                  >
+                    Quantity
+                  </AppText>
+                </View>
+                <View className="flex-1 items-end space-y-3">
+                  <AppText className="text-sm text-textPrimary">
+                    {product.sku || "-"}
+                  </AppText>
+                  <AppText className="text-sm text-textPrimary">
+                    {product.stockQuantity}
+                  </AppText>
+                </View>
+              </View>
+            </View>
+
+            {Object.entries(product.specifications ?? {}).length > 0 ? (
+              <View className="rounded-2xl border border-border bg-card px-4 py-3">
+                <AppText
+                  style={{ color: themeColors.textSecondary }}
+                  className="mb-3 text-sm font-semibold"
+                >
+                  Specifications
+                </AppText>
+                {Object.entries(product.specifications ?? {}).map(
+                  ([key, value]) => (
+                    <View
+                      key={key}
+                      className="flex-row items-center justify-between gap-3 py-2 border-t border-border first:border-t-0"
+                    >
+                      <AppText
+                        style={{ color: themeColors.textSecondary }}
+                        className="text-sm capitalize"
+                      >
+                        {key}
+                      </AppText>
+                      <AppText className="text-sm text-textPrimary">
+                        {value}
+                      </AppText>
+                    </View>
+                  ),
+                )}
+              </View>
+            ) : null}
+
             <AppText muted>{product.description}</AppText>
 
             <PrimaryButton
@@ -103,7 +166,9 @@ export default function ProductDetailsScreen() {
         )}
       </ScrollView>
 
-      {product ? <WhatsAppFab message={`Hi, I'm interested in ${product.name}.`} /> : null}
+      {product ? (
+        <WhatsAppFab message={`Hi, I'm interested in ${product.name}.`} />
+      ) : null}
     </SafeAreaView>
   );
 }

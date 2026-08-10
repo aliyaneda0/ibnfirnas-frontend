@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Animated, View, type ViewStyle } from "react-native";
 
 import { themeColors } from "@/config/design-tokens";
@@ -11,7 +11,7 @@ type SkeletonProps = {
 };
 
 export function Skeleton({ height = 16, width = "100%", borderRadius = 8, style }: SkeletonProps) {
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const [opacity] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     const pulse = Animated.loop(
